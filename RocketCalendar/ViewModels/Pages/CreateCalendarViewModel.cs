@@ -24,7 +24,64 @@ namespace RocketCalendar.ViewModels.Pages
         private bool _isFlyoutOpen = false;
 
         [ObservableProperty]
-        private bool _isCreateCalendarButtonEnabled = true;
+        [NotifyPropertyChangedFor(nameof(IsCreateCalendarButtonEnabled))]
+        private int _baseDateIndexInput;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsCreateCalendarButtonEnabled))]
+        [NotifyPropertyChangedFor(nameof(IsSpecificDayNumberSelectEnabled))]
+        [NotifyPropertyChangedFor(nameof(SelectedBaseMonthMaxDays))]
+        private int _baseMonthIndexInput;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsCreateCalendarButtonEnabled))]
+        private int _baseDayInput;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsCreateCalendarButtonEnabled))]
+        private int _baseYearInput;
+
+
+        public bool IsSpecificDayNumberSelectEnabled
+        {
+            get
+            {
+                return (MonthListViewItems.Count > 0);
+            }
+        }
+
+        public int SelectedBaseMonthMaxDays
+        {
+            get
+            {
+                if(MonthListViewItems.Count > 0 && BaseMonthIndexInput >= 0)
+                {
+                    if(BaseDayInput > MonthListViewItems[BaseMonthIndexInput].NumOfDays)
+                    {
+                        BaseDayInput = MonthListViewItems[BaseMonthIndexInput].NumOfDays;
+                    }
+                    return MonthListViewItems[BaseMonthIndexInput].NumOfDays;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
+
+        public bool IsCreateCalendarButtonEnabled
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(NewCalendarName)
+                    && MonthListViewItems.Count > 0
+                    && DayNameListViewItems.Count > 0
+                    && BaseDateIndexInput >= 0
+                    && BaseMonthIndexInput >= 0
+                    && BaseDayInput > 0
+                    && IsSpecificDayNumberSelectEnabled;
+            }
+        }
 
         [ObservableProperty]
         private bool? _isAddMonthButtonEnabled = false;
@@ -39,15 +96,19 @@ namespace RocketCalendar.ViewModels.Pages
         private string _newDayName;
 
         [ObservableProperty]
-        private RocketDate _baseDate;
+        [NotifyPropertyChangedFor(nameof(IsCreateCalendarButtonEnabled))]
+        private RocketDate? _baseDate;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsCreateCalendarButtonEnabled))]
         private string _newCalendarName;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsCreateCalendarButtonEnabled))]
         private ObservableCollection<RocketMonth> _monthListViewItems = new ObservableCollection<RocketMonth>();
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsCreateCalendarButtonEnabled))]
         private ObservableCollection<string> _dayNameListViewItems = new ObservableCollection<string>();
 
         [ObservableProperty]
@@ -59,6 +120,8 @@ namespace RocketCalendar.ViewModels.Pages
         [RelayCommand]
         private async Task CreateCalendar(object content)
         {
+
+            //not needed?
             if(MonthListViewItems.Count > 0 && DayNameListViewItems.Count > 0 && NewCalendarName.Length > 0)
             {
                 MonthListBoxItems = MonthListViewItems;
@@ -98,6 +161,9 @@ namespace RocketCalendar.ViewModels.Pages
         {
             //...
             MonthListViewItems.Add(new RocketMonth(NewMonthName, NewMonthDayCount));
+            OnPropertyChanged(nameof(IsCreateCalendarButtonEnabled));
+            OnPropertyChanged(nameof(IsSpecificDayNumberSelectEnabled));
+            OnPropertyChanged(nameof(SelectedBaseMonthMaxDays));
         }
 
         [RelayCommand]
@@ -106,6 +172,9 @@ namespace RocketCalendar.ViewModels.Pages
             if ((int)obj >= 0)
             {
                 MonthListViewItems.RemoveAt((int)obj);
+                OnPropertyChanged(nameof(IsCreateCalendarButtonEnabled));
+                OnPropertyChanged(nameof(IsSpecificDayNumberSelectEnabled));
+                OnPropertyChanged(nameof(SelectedBaseMonthMaxDays));
             }
         }
 
@@ -114,6 +183,7 @@ namespace RocketCalendar.ViewModels.Pages
         {
             //...
             DayNameListViewItems.Add(NewDayName);
+            OnPropertyChanged(nameof(IsCreateCalendarButtonEnabled));
         }
 
         [RelayCommand]
@@ -122,6 +192,7 @@ namespace RocketCalendar.ViewModels.Pages
             if ((int)obj >= 0)
             {
                 DayNameListViewItems.RemoveAt((int)obj);
+                OnPropertyChanged(nameof(IsCreateCalendarButtonEnabled));
             }
         }
 
