@@ -30,5 +30,6 @@ namespace RocketCalendar.Views.Pages
 
             InitializeComponent();
         }
+
     }
 }

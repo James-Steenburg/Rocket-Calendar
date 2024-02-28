@@ -15,5 +15,13 @@ namespace RocketCalendar.Models
         public int DateMonth { get; set; }
 
         public int DateYear { get; set; }  
+
+        public RocketDate(int dayIndex, int dateDay, int dateMonth, int dateYear) 
+        {
+            DayIndex = dayIndex;
+            DateDay = dateDay;
+            DateMonth = dateMonth;
+            DateYear = dateYear;
+        }
     }
 }

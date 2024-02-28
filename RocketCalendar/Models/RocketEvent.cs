@@ -16,12 +16,15 @@ namespace RocketCalendar.Models
 
         public bool IsPrivate { get; set; }
 
-        public RocketEvent(RocketDate eventDate, string eventName, string eventDescription, bool isPrivate)
+        public int ColorIndex { get; set; }
+
+        public RocketEvent(RocketDate eventDate, string eventName, string eventDescription, bool isPrivate, int colorIndex)
         {
             EventDate = eventDate;
             EventName = eventName;
             EventDescription = eventDescription;
             IsPrivate = isPrivate;
+            ColorIndex = colorIndex;
         }
     }
 }
