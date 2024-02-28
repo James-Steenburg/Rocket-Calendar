@@ -19,6 +19,10 @@ namespace RocketCalendar.ViewModels.Pages
     public partial class CreateEventViewModel : ObservableObject, INavigationAware
     {
         private bool _isInitialized = false;
+        private GlobalAppData _appData;
+
+        [ObservableProperty]
+        private Models.RocketCalendar _activeCalendar;
 
         [ObservableProperty]
         private bool _isPrivateEvent = false;
@@ -132,15 +136,26 @@ namespace RocketCalendar.ViewModels.Pages
             //Snackbar acknowledging new event created
         }
 
+        public CreateEventViewModel(GlobalAppData appData)
+        {
+            _appData = appData;
+        }
 
         public void OnNavigatedTo()
         {
             
             if (!_isInitialized)
                 InitializeViewModel();
+
+            ActiveCalendar = _appData.ActiveRocketCalendar;
         }
 
-        public void OnNavigatedFrom() { }
+        public void OnNavigatedFrom() 
+        {
+            //Add validation and save work prompt if needed
+            //May want to change to only save event list
+            _appData.ActiveRocketCalendar = ActiveCalendar;
+        }
 
         private void InitializeViewModel()
         {

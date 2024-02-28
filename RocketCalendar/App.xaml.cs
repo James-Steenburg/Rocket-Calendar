@@ -55,6 +55,9 @@ namespace RocketCalendar
                     services.AddSingleton<INavigationWindow, Views.RocketCalendarView>();
                     services.AddSingleton<ViewModels.RocketCalendarViewModel>();
 
+                    // Global App Data
+                    services.AddSingleton<GlobalAppData>();
+
                     // Views and ViewModels
                     services.AddSingleton<Views.Pages.DashboardPage>();
                     services.AddSingleton<ViewModels.Pages.DashboardViewModel>();
