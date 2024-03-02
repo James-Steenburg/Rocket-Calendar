@@ -22,7 +22,7 @@ namespace RocketCalendar.ViewModels.Pages
         private GlobalAppData _appData;
 
         [ObservableProperty]
-        private Models.RocketCalendar _activeCalendar;
+        private RocketCalendarModel _activeCalendar;
 
         [ObservableProperty]
         private bool _isPrivateEvent = false;

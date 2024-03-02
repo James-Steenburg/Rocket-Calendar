@@ -12,10 +12,19 @@ namespace RocketCalendar.Models
 
         public int NumOfDays { get; set; }
 
+        public int? LeapYearInterval { get; set; }
+
         public RocketMonth(string name, int numOfDays)
         {
             Name = name;
             NumOfDays = numOfDays;
+        }
+
+        public RocketMonth(string name, int numOfDays, int leapYearInterval)
+        {
+            Name = name;
+            NumOfDays = numOfDays;
+            LeapYearInterval = leapYearInterval;
         }
     }
 }

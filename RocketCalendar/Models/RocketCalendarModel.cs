@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RocketCalendar.Models
 {
-    public class RocketCalendar
+    public class RocketCalendarModel
     {
         public RocketDate BaseDate { get; set; }
 
@@ -21,7 +21,7 @@ namespace RocketCalendar.Models
 
         public int CurrentYear { get; set; }
 
-        public RocketCalendar
+        public RocketCalendarModel
             (
             RocketDate baseDate, 
             ObservableCollection<RocketMonth> monthCollection, 

@@ -19,7 +19,7 @@ namespace RocketCalendar.ViewModels.Pages
         private string _calendarName = "ExampleCalendarName";
 
         [ObservableProperty]
-        private Models.RocketCalendar _activeCalendar;
+        private RocketCalendarModel _activeCalendar;
 
         [RelayCommand]
         private void DecrementDisplayYear(object obj)

@@ -8,6 +8,11 @@ namespace RocketCalendar.Models
 {
     public class GlobalAppData
     {
-        public RocketCalendar ActiveRocketCalendar { get; set; }   
+        public RocketCalendarModel ActiveRocketCalendar { get; set; }
+        
+        public bool IS_DEBUG_MODE
+        {
+            get { return true; }
+        }
     }
 }
