@@ -39,6 +39,13 @@ using RocketCalendar.Helpers;
             Properties.Settings.Default.CalendarPathConcatenatedList = "";
                 Delimiter with {Path.PathSeparator} aka ";" 
                     Ex: Console.WriteLine($"Path.PathSeparator: '{Path.PathSeparator}'");
+
+
+
+
+TO DO:
+    add leap year control when creating calendar months
+    add Calendar Name to RocketCalendarModel
  */
 
 
@@ -99,10 +106,14 @@ namespace RocketCalendar.ViewModels
                     },
                     new ObservableCollection<RocketEvent>()
                     {
-                        new RocketEvent(new RocketDate(1,1,1,1),"bday","it was my bday",false,2)
+                        new RocketEvent(new RocketDate(1,1,1),"bday","it was my bday",false,2),
+                        new RocketEvent(new RocketDate(3,2,2024),"Today","Just playing God of War",false,2),
+                        new RocketEvent(new RocketDate(3,2,2024),"Jessie","Just playing God of War",false,8),
+                        new RocketEvent(new RocketDate(3,2,2024),"Played","Just playing God of War",false,9),
+                        new RocketEvent(new RocketDate(3,2,2024),"Kratos","Just playing God of War",true,10)
                     },
-                    1,
-                    1
+                    2,
+                    2024
                     );
 
                 Helpers.RocketDateHelper rdh = new RocketDateHelper();
