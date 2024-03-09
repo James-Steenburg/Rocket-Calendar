@@ -44,10 +44,10 @@ using RocketCalendar.Helpers;
 
 
 TO DO:
-    add leap year control when creating calendar months
-    add Calendar Name to RocketCalendarModel
     Move Day and Calendar controls to custom controls: https://www.youtube.com/watch?v=t8zB_SYGOF0
-    Update models to have oberservable properties to reduce variables needed
+    Add Fonts: Montserrat or AzeretMono-thin(DRS)?
+    Event Repeat property?
+    Make a Create Excel Event List Template and Excel Event List Import
 
     Maybe?
     Change Navigation items to different calendars, settings and create calendar
@@ -84,6 +84,7 @@ namespace RocketCalendar.ViewModels
             if(_appData.IS_DEBUG_MODE)
             {
                 _appData.ActiveRocketCalendar = new RocketCalendarModel(
+                    "Example Gregorian Calendar",
                     new RocketDate(6, 2, 2, 2024), 
                     new ObservableCollection<RocketMonth>() 
                     {
@@ -197,6 +198,12 @@ namespace RocketCalendar.ViewModels
                 Content = "Create Calendar",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.CalendarAdd24 },
                 TargetPageType = typeof(Views.Pages.CreateCalendarPage)
+            },
+            new NavigationViewItem()
+            {
+                Content = "File IO",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.StreamInputOutput20 },
+                TargetPageType = typeof(Views.Pages.FileIOPage)
             }
         };
 

@@ -22,14 +22,33 @@ namespace RocketCalendar.ViewModels.Pages
         private GlobalAppData _appData;
 
         [ObservableProperty]
-        private string _calendarName = "ExampleCalendarName";
-
-        [ObservableProperty]
         private RocketCalendarModel _activeCalendar;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(GeneratedWeeks))]
         private RocketMonth _selectedRocketMonth;
+
+        //[ObservableProperty]
+        //[NotifyPropertyChangedFor(nameof(GeneratedWeeks))]
+        //private int _selectedRocketMonthIndex;
+
+        public int SelectedRocketMonthIndex
+        {
+            get 
+            { 
+                return ActiveCalendar.CurrentMonth; 
+            }
+            set 
+            { 
+                if(value < ActiveCalendar.MonthCollection.Count && value >= 0)
+                {
+                    //_selectedRocketMonthIndex = value;
+                    ActiveCalendar.CurrentMonth = value;
+                    OnPropertyChanged(nameof(SelectedRocketMonthIndex));
+                    OnPropertyChanged(nameof(GeneratedWeeks));
+                }
+            }
+        }
 
         //[ObservableProperty]
         //private ObservableCollection<RocketWeekModel> _weeksCollection;
@@ -63,39 +82,17 @@ namespace RocketCalendar.ViewModels.Pages
         [RelayCommand]
         private void DecrementDisplayMonth(object cmdParameter)
         {
-            int selectedIndex = (int)cmdParameter;
-
-            if(selectedIndex > 0)
-            {
-                selectedIndex--;
-            } 
-            else if (selectedIndex == 0)
-            {
-                selectedIndex = ActiveCalendar.MonthCollection.Count - 1;
-            }
-            SelectedRocketMonth = ActiveCalendar.MonthCollection[selectedIndex];
-            ActiveCalendar.CurrentMonth = selectedIndex;
-            OnPropertyChanged(nameof(SelectedRocketMonth));
+            ActiveCalendar.CurrentMonth--;
             OnPropertyChanged(nameof(GeneratedWeeks));
+            OnPropertyChanged(nameof(SelectedRocketMonthIndex));
         }
 
         [RelayCommand]
         private void IncrementDisplayMonth(object cmdParameter)
         {
-            int selectedIndex = (int)cmdParameter;
-
-            if (selectedIndex < ActiveCalendar.MonthCollection.Count - 1)
-            {
-                selectedIndex++;
-            }
-            else if (selectedIndex == ActiveCalendar.MonthCollection.Count - 1)
-            {
-                selectedIndex = 0;
-            }
-            SelectedRocketMonth = ActiveCalendar.MonthCollection[selectedIndex];
-            ActiveCalendar.CurrentMonth = selectedIndex;
-            OnPropertyChanged(nameof(SelectedRocketMonth));
+            ActiveCalendar.CurrentMonth++;
             OnPropertyChanged(nameof(GeneratedWeeks));
+            OnPropertyChanged(nameof(SelectedRocketMonthIndex));
         }
 
         public void OnNavigatedTo()
@@ -503,7 +500,7 @@ namespace RocketCalendar.ViewModels.Pages
             _appData = appData;
             ActiveCalendar = _appData.ActiveRocketCalendar;
             _contentDialogService = contentDialogService;
-            SelectedRocketMonth = ActiveCalendar.MonthCollection[ActiveCalendar.CurrentMonth];
+            //SelectedRocketMonth = ActiveCalendar.MonthCollection[ActiveCalendar.CurrentMonth];
         }
     }
 }

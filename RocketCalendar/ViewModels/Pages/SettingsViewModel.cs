@@ -25,7 +25,7 @@ namespace RocketCalendar.ViewModels.Pages
         [RelayCommand]
         private void OpenGITProjectPage(object obj)
         {
-            var destinationurl = "https://github.com/James-Steenburg/Protanopia-Simulator";
+            var destinationurl = "https://github.com/James-Steenburg/Rocket-Calendar";
             var sInfo = new System.Diagnostics.ProcessStartInfo(destinationurl)
             {
                 UseShellExecute = true,

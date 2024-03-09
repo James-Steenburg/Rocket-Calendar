@@ -11,6 +11,9 @@ namespace RocketCalendar.Models
     public partial class RocketCalendarModel : ObservableObject
     {
         [ObservableProperty]
+        private string _calendarName;
+
+        [ObservableProperty]
         private RocketDate _baseDate;
 
         [ObservableProperty]
@@ -30,6 +33,7 @@ namespace RocketCalendar.Models
 
         public RocketCalendarModel
             (
+            string calendarName,
             RocketDate baseDate, 
             ObservableCollection<RocketMonth> monthCollection, 
             ObservableCollection<string> dayNameCollection, 
@@ -38,6 +42,7 @@ namespace RocketCalendar.Models
             int currentYear
             )
         {
+            CalendarName = calendarName;
             BaseDate = baseDate;
             MonthCollection = monthCollection;
             DayNameCollection = dayNameCollection;

@@ -21,6 +21,8 @@ namespace RocketCalendar.ViewModels.Pages
         private bool _isInitialized = false;
         private GlobalAppData _appData;
 
+        private ISnackbarService _snackbarService;
+
         [ObservableProperty]
         private RocketCalendarModel _activeCalendar;
 
@@ -45,6 +47,18 @@ namespace RocketCalendar.ViewModels.Pages
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsCreateEventButtonEnabled))]
         private int _eventYearInput;
+
+        [ObservableProperty]
+        private bool _isRepeatingEvent;
+
+        [ObservableProperty]
+        private int _weekRepeatInterval;
+
+        [ObservableProperty]
+        private int _monthRepeatInterval;
+
+        [ObservableProperty]
+        private int _yearRepeatInterval;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsCreateEventButtonEnabled))]
@@ -81,22 +95,21 @@ namespace RocketCalendar.ViewModels.Pages
         [ObservableProperty]
         private int _selectedBrushIndex;
 
-
         public int SelectedInputMonthMaxDays
         {
             get
             {
-                if (MonthListViewItems.Count > 0 && EventMonthIndexInput >= 0)
+                if(ActiveCalendar.MonthCollection.Count > 0 && EventMonthIndexInput >= 0)
                 {
-                    if (EventDayInput > MonthListViewItems[EventMonthIndexInput].NumOfDays)
+                    if(EventDayInput > ActiveCalendar.MonthCollection[EventMonthIndexInput].NumOfDays)
                     {
-                        EventDayInput = MonthListViewItems[EventMonthIndexInput].NumOfDays;
+                        EventDayInput = ActiveCalendar.MonthCollection[EventMonthIndexInput].NumOfDays;
                     }
-                    return MonthListViewItems[EventMonthIndexInput].NumOfDays;
+                    return ActiveCalendar.MonthCollection[EventMonthIndexInput].NumOfDays;
                 }
                 else
                 {
-                    return 1;
+                    return 0;
                 }
             }
         }
@@ -106,7 +119,7 @@ namespace RocketCalendar.ViewModels.Pages
             get
             {
                 return !String.IsNullOrEmpty(EventTitle)
-                    && MonthListViewItems.Count > 0
+                    && ActiveCalendar.MonthCollection.Count > 0
                     && EventDayInput >= 0
                     && EventMonthIndexInput >= 0
                     && EventDayInput > 0;
@@ -115,30 +128,81 @@ namespace RocketCalendar.ViewModels.Pages
             }
         }
 
+        private ControlAppearance _snackbarAppearance = ControlAppearance.Secondary;
+
+        private int _snackbarAppearanceComboBoxSelectedIndex = 1;
+
+        public int SnackbarAppearanceComboBoxSelectedIndex
+        {
+            get => _snackbarAppearanceComboBoxSelectedIndex;
+            set
+            {
+                SetProperty<int>(ref _snackbarAppearanceComboBoxSelectedIndex, value);
+                UpdateSnackbarAppearance(value);
+            }
+        }
+
+        private void UpdateSnackbarAppearance(int appearanceIndex)
+        {
+            _snackbarAppearance = appearanceIndex switch
+            {
+                1 => ControlAppearance.Secondary,
+                2 => ControlAppearance.Info,
+                3 => ControlAppearance.Success,
+                4 => ControlAppearance.Caution,
+                5 => ControlAppearance.Danger,
+                6 => ControlAppearance.Light,
+                7 => ControlAppearance.Dark,
+                8 => ControlAppearance.Transparent,
+                _ => ControlAppearance.Primary
+            };
+        }
+
         [RelayCommand]
         private void CreateEvent(object content)
         {
-            //Todo: Add functionality to get eventDayNameIndex for eventDate
+            try
+            {
+                RocketDate eventDate = new RocketDate(1, EventDayInput, EventMonthIndexInput, EventYearInput);
+                RocketEvent newEvent = new RocketEvent(
+                    eventDate,
+                    EventTitle,
+                    EventDescription,
+                    IsPrivateEvent,
+                    SelectedBrushIndex
+                    );
 
-            RocketDate eventDate = new RocketDate(1, EventDayInput, EventMonthIndexInput, EventYearInput);
-            RocketEvent newEvent = new RocketEvent(
-                eventDate,
-                EventTitle,
-                EventDescription,
-                IsPrivateEvent,
-                SelectedBrushIndex
+                ActiveCalendar.EventCollection.Add(newEvent);
+
+                SnackbarAppearanceComboBoxSelectedIndex = 3;
+                _snackbarService.Show(
+                "Event Added!",
+                EventTitle + " event added to your calendar: " + ActiveCalendar.CalendarName,
+                _snackbarAppearance,
+                new SymbolIcon(SymbolRegular.CheckmarkCircle24),
+                TimeSpan.FromSeconds(3)
                 );
+            }
+            catch
+            {
+                SnackbarAppearanceComboBoxSelectedIndex = 5;
+                _snackbarService.Show(
+                "Error:",
+                "The application failed to add your event to your calendar.",
+                _snackbarAppearance,
+                new SymbolIcon(SymbolRegular.ErrorCircle24),
+                TimeSpan.FromSeconds(3)
+                );
+            }
 
-
-            //Add Event to Calendar
-            //Change Nav
+            
             //Clear/Dispose of CreateEvent V/VM?
-            //Snackbar acknowledging new event created
         }
 
-        public CreateEventViewModel(GlobalAppData appData)
+        public CreateEventViewModel(GlobalAppData appData, ISnackbarService snackbarService)
         {
             _appData = appData;
+            _snackbarService = snackbarService;
         }
 
         public void OnNavigatedTo()
