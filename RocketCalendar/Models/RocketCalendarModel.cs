@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,19 +8,25 @@ using System.Threading.Tasks;
 
 namespace RocketCalendar.Models
 {
-    public class RocketCalendarModel
+    public partial class RocketCalendarModel : ObservableObject
     {
-        public RocketDate BaseDate { get; set; }
+        [ObservableProperty]
+        private RocketDate _baseDate;
 
-        public ObservableCollection<RocketMonth> MonthCollection { get; set; }
+        [ObservableProperty]
+        private ObservableCollection<RocketMonth> _monthCollection;
 
-        public ObservableCollection<string> DayNameCollection { get; set; }
+        [ObservableProperty]
+        private ObservableCollection<string> _dayNameCollection;
 
-        public ObservableCollection<RocketEvent> EventCollection { get; set; }
+        [ObservableProperty]
+        private ObservableCollection<RocketEvent> _eventCollection;
 
-        public int CurrentMonth { get; set; }
+        [ObservableProperty]
+        private int _currentMonth;
 
-        public int CurrentYear { get; set; }
+        [ObservableProperty]
+        private int _currentYear;
 
         public RocketCalendarModel
             (

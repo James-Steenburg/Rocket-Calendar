@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using RocketCalendar.Controls;
 using RocketCalendar.Models;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Animation;
+using Wpf.Ui;
 
 namespace RocketCalendar.ViewModels.Pages
 {
@@ -25,29 +28,36 @@ namespace RocketCalendar.ViewModels.Pages
         private RocketCalendarModel _activeCalendar;
 
         [ObservableProperty]
-        //[NotifyPropertyChangedFor(nameof(GeneratedWeeks))]
+        [NotifyPropertyChangedFor(nameof(GeneratedWeeks))]
         private RocketMonth _selectedRocketMonth;
 
         //[ObservableProperty]
         //private ObservableCollection<RocketWeekModel> _weeksCollection;
 
+        [ObservableProperty]
+        private RocketEvent _editedEvent;
 
         //[ObservableProperty]
         //private ObservableCollection<RocketEvent> _currentEvents;
 
         [ObservableProperty]
         private DataTable _myDataTable;
+        private IContentDialogService _contentDialogService;
 
         [RelayCommand]
         private void DecrementDisplayYear(object obj)
         {
             //...
+            ActiveCalendar.CurrentYear--;
+            OnPropertyChanged(nameof(GeneratedWeeks));
         }
 
         [RelayCommand]
         private void IncrementDisplayYear(object obj)
         {
             //...
+            ActiveCalendar.CurrentYear++;
+            OnPropertyChanged(nameof(GeneratedWeeks));
         }
 
         [RelayCommand]
@@ -92,8 +102,9 @@ namespace RocketCalendar.ViewModels.Pages
         {
             if (!_isInitialized)
                 InitializeViewModel();
-
+      
             ActiveCalendar = _appData.ActiveRocketCalendar;
+            //SelectedRocketMonth = ActiveCalendar.MonthCollection[ActiveCalendar.CurrentMonth];
         }
 
         
@@ -267,18 +278,85 @@ namespace RocketCalendar.ViewModels.Pages
         }
 
         [RelayCommand]
-        private void OpenEventDetails(object obj)
+        private async void OpenEventDetails(object obj)
         {
             RocketEvent rEvent = (RocketEvent)obj;
+            var uiMessageBox = new Wpf.Ui.Controls.MessageBox
+            {
+                Title = rEvent.EventName,
+                Content = rEvent.EventDescription,
+                PrimaryButtonText = "Edit",
+                SecondaryButtonText = "Delete",
+                SecondaryButtonAppearance = Wpf.Ui.Controls.ControlAppearance.Danger
+            };
 
+            var result = await uiMessageBox.ShowDialogAsync();
+            
+            switch(result.ToString())
+            {
+                case "Primary":
+                    //Edit
+                    AddOrEditEvent(rEvent);
+
+                    break;
+                case "Secondary":
+                    DeleteEvent(rEvent);
+                    break;
+                default:
+                    break;
+            }
 
         }
 
         [RelayCommand]
+        private async void DeleteEvent(object eventToDelete)
+        {
+            var uiMessageBox = new Wpf.Ui.Controls.MessageBox
+            {
+                Title = "Delete Event",
+                Content = "Are you sure you want to delete this event?",
+                PrimaryButtonText = "Delete",
+                PrimaryButtonAppearance = Wpf.Ui.Controls.ControlAppearance.Danger
+            };
+
+            var result = await uiMessageBox.ShowDialogAsync();
+
+            if(result.ToString() == "Primary")
+            {
+                RocketEvent rEvent = (RocketEvent)eventToDelete;
+
+                if (ActiveCalendar.EventCollection.Any(e => e == rEvent))
+                {
+                    ActiveCalendar.EventCollection.RemoveAt(ActiveCalendar.EventCollection.IndexOf(rEvent));
+                    OnPropertyChanged(nameof(GeneratedWeeks));
+                }
+            }
+        }
+
+        [RelayCommand]
+        private async void AddOrEditEvent(object obj)
+        {
+            if(obj is RocketEvent)
+            {
+                EditedEvent = (RocketEvent)obj;
+
+
+                //var NewContentDialog = new EditEventDialog(_contentDialogService.GetContentPresenter(), EditedEvent);
+                //var result = await NewContentDialog.ShowAsync();
+            }
+            else if (obj is RocketDate)
+            {
+                RocketEvent rEvent = new RocketEvent((RocketDate)obj, " ", " ", false, 0);
+            }
+        }
+
+        
+
+        [RelayCommand]
         private void DayClicked(object obj)
         {
-            //RocketEvent rEvent = (RocketEvent)obj;
 
+            AddOrEditEvent((RocketDate)obj);
 
         }
 
@@ -415,14 +493,17 @@ namespace RocketCalendar.ViewModels.Pages
         private void InitializeViewModel()
         {
             //initialization ...
-
+            ActiveCalendar = _appData.ActiveRocketCalendar;
+            //SelectedRocketMonth = ActiveCalendar.MonthCollection[ActiveCalendar.CurrentMonth];
             _isInitialized = true;
         }
 
-        public CalendarViewModel(GlobalAppData appData)
+        public CalendarViewModel(GlobalAppData appData, INavigationService navigationService, IContentDialogService contentDialogService)
         {
             _appData = appData;
             ActiveCalendar = _appData.ActiveRocketCalendar;
+            _contentDialogService = contentDialogService;
+            SelectedRocketMonth = ActiveCalendar.MonthCollection[ActiveCalendar.CurrentMonth];
         }
     }
 }

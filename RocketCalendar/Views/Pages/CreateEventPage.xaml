@@ -120,7 +120,7 @@
             Grid.Row="2"
             Grid.Column="1"
             Text="Month:" />
-        <ListBox
+        <ComboBox
             Grid.Row="2"
             Grid.Column="1"
             Height="60"

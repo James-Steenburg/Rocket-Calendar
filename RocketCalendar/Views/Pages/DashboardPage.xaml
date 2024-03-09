@@ -54,6 +54,13 @@
                 Margin="12,0,0,0"
                 VerticalAlignment="Center"
                 Text="{Binding ViewModel.Counter, Mode=OneWay}" />
+
+            <ui:Button
+                Grid.Column="1"
+                Margin="10,0,10,0"
+                Command="{Binding ViewModel.ShowAddOrEditEventDialogCommand, Mode=OneWay}"
+                Content="Dialog btn"
+                Icon="{ui:SymbolIcon Fluent24}" />
         </Grid>
 
     </Grid>

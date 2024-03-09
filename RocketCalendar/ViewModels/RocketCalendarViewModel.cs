@@ -46,6 +46,12 @@ using RocketCalendar.Helpers;
 TO DO:
     add leap year control when creating calendar months
     add Calendar Name to RocketCalendarModel
+    Move Day and Calendar controls to custom controls: https://www.youtube.com/watch?v=t8zB_SYGOF0
+    Update models to have oberservable properties to reduce variables needed
+
+    Maybe?
+    Change Navigation items to different calendars, settings and create calendar
+        Create Event will be moved to an external window.
  */
 
 
@@ -110,7 +116,8 @@ namespace RocketCalendar.ViewModels
                         new RocketEvent(new RocketDate(3,2,2024),"Today","Just playing God of War",false,2),
                         new RocketEvent(new RocketDate(3,2,2024),"Jessie","Just playing God of War",false,8),
                         new RocketEvent(new RocketDate(3,2,2024),"Played","Just playing God of War",false,9),
-                        new RocketEvent(new RocketDate(3,2,2024),"Kratos","Just playing God of War",true,10)
+                        new RocketEvent(new RocketDate(3,2,2024),"Kratos","Just playing God of War",true,10),
+                        new RocketEvent(new RocketDate(5,6,2024),"Bday","wow 30",true,10)
                     },
                     2,
                     2024

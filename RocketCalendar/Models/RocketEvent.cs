@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,17 +7,22 @@ using System.Threading.Tasks;
 
 namespace RocketCalendar.Models
 {
-    public class RocketEvent
+    public partial class RocketEvent : ObservableObject
     {
-        public RocketDate EventDate { get; set; }
-        
-        public string EventName { get; set; }
+        [ObservableProperty]
+        private RocketDate _eventDate;
 
-        public string EventDescription { get; set; }
+        [ObservableProperty]
+        private string _eventName;
 
-        public bool IsPrivate { get; set; }
+        [ObservableProperty]
+        private string _eventDescription;
 
-        public int ColorIndex { get; set; }
+        [ObservableProperty]
+        private bool _isPrivate;
+
+        [ObservableProperty]
+        private int _colorIndex;
 
         public RocketEvent(RocketDate eventDate, string eventName, string eventDescription, bool isPrivate, int colorIndex)
         {

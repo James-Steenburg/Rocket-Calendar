@@ -24,8 +24,12 @@
         <converters:ListViewHeightConverter x:Key="ListViewHeightConverterKey" />
         <converters:RocketBrushConverter x:Key="RocketBrushConverterKey" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterKey" />
-        <DataTemplate x:Key="DayTemplate" />
 
+        <StackPanel x:Key="EditEventDialogContent">
+            <TextBlock Text="Create or edit your event" />
+            <TextBlock Text="Event Name:" />
+            <TextBlock Text="{Binding ViewModel.EditedEvent.EventName}" />
+        </StackPanel>
 
 
     </Page.Resources>
@@ -46,15 +50,21 @@
             </Grid.ColumnDefinitions>
 
             <!--  Calendar Name  -->
-            <TextBlock
+            <Border
                 Grid.Column="0"
                 Margin="10,0,0,0"
-                VerticalAlignment="Center"
-                d:Text="d:CalendarName"
-                FontSize="20"
-                FontWeight="Medium"
-                Text="{Binding ViewModel.CalendarName}"
-                TextAlignment="Center" />
+                BorderBrush="{ui:ThemeResource AccentTextFillColorTertiaryBrush}"
+                BorderThickness="0,0,0,2"
+                CornerRadius="4">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    d:Text="d:CalendarName"
+                    FontSize="20"
+                    FontWeight="Medium"
+                    Text="{Binding ViewModel.CalendarName}"
+                    TextAlignment="Center" />
+            </Border>
+
 
             <!--  Month Control  -->
             <StackPanel
@@ -113,10 +123,11 @@
                     Height="30"
                     MinWidth="100"
                     Margin="10,0,10,0"
+                    VerticalAlignment="Center"
+                    FontSize="12"
                     MaxDecimalPlaces="0"
                     Maximum="10000"
                     Minimum="-10000"
-                    PlaceholderText="{Binding ViewModel.ActiveCalendar.CurrentYear}"
                     SmallChange="1"
                     SpinButtonPlacementMode="Hidden"
                     VerticalScrollBarVisibility="Hidden"
