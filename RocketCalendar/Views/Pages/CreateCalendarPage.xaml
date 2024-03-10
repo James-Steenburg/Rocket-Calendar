@@ -89,18 +89,28 @@
         </ResourceDictionary>
     </Page.Resources>
 
-
-    <Grid>
+    <Grid Margin="0,5,0,0">
         <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="40" />
-            <RowDefinition Height="10" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="35" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!--  Label  -->
+        <TextBlock
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="10,0,0,0"
+            VerticalAlignment="Top"
+            FontSize="20"
+            FontWeight="Medium"
+            Text="Create a Calendar" />
+
         <!--  Flyout  -->
         <ui:Flyout
-            Grid.Row="0"
+            Grid.Row="1"
             IsOpen="{Binding ViewModel.IsFlyoutOpen, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:CreateCalendarPage}, Mode=TwoWay}"
             Placement="Mouse">
             <StackPanel>
@@ -116,28 +126,17 @@
             </StackPanel>
         </ui:Flyout>
 
-        <!--  Header Bar  -->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="3" Margin="10,0,10,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
-
-            <!--  Label  -->
-            <TextBlock
-                Grid.Column="0"
-                Margin="10,0,0,0"
-                VerticalAlignment="Center"
-                FontSize="20"
-                FontWeight="Medium"
-                Text="Create a Calendar"
-                TextAlignment="Center" />
 
             <!--  Enter Calendar Name  -->
             <ui:TextBox
-                Grid.Column="1"
-                Margin="10,0,0,0"
+                Grid.Column="0"
+                Margin="0,0,5,0"
                 VerticalAlignment="Center"
                 PlaceholderText="Enter Calendar Name..."
                 Text="{Binding ViewModel.NewCalendarName, Mode=TwoWay}" />
@@ -145,80 +144,76 @@
             <!--  Create Calendar Button  -->
             <ui:Button
                 Grid.Column="2"
-                Margin="10,0,0,0"
+                HorizontalAlignment="Right"
                 Appearance="Primary"
                 Command="{Binding ViewModel.CreateCalendarCommand, Mode=OneWay}"
                 CommandParameter="{StaticResource DialogContent}"
                 Content="Create Calendar"
                 Icon="{ui:SymbolIcon CalendarAdd24}"
                 IsEnabled="{Binding ViewModel.IsCreateCalendarButtonEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:CreateCalendarPage}}" />
-
         </Grid>
 
         <!--  Calendar Parameters  -->
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="4" Margin="10,0,10,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="2*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
                 <RowDefinition Height="4*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Row="0" Grid.Column="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <ui:TextBox
-                    Grid.Column="0"
-                    Margin="10,0,0,0"
-                    VerticalAlignment="Center"
-                    PlaceholderText="Enter Month Name..."
-                    Text="{Binding ViewModel.NewMonthName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                <ui:NumberBox
-                    Grid.Column="1"
-                    Margin="10,0,10,0"
-                    Icon="{ui:SymbolIcon NumberSymbolSquare24}"
-                    MaxDecimalPlaces="0"
-                    Maximum="100"
-                    Minimum="0"
-                    PlaceholderText="# of Days..."
-                    SmallChange="1"
-                    Value="{Binding ViewModel.NewMonthDayCount, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                <ui:Button
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Height="30"
-                    Margin="10,0,0,0"
-                    Appearance="Primary"
-                    Command="{Binding ViewModel.AddMonthToCollectionCommand, Mode=OneWay}"
-                    Content="Add Month Calendar"
-                    Icon="{ui:SymbolIcon CalendarAdd24}" />
-                <ui:Button
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Height="30"
-                    Margin="10,0,0,0"
-                    Appearance="Secondary"
-                    Command="{Binding ViewModel.RemoveMonthFromCollectionCommand, Mode=OneWay}"
-                    CommandParameter="{Binding ElementName=NewMonthListView, Path=SelectedIndex}"
-                    Content="Remove Month"
-                    Icon="{ui:SymbolIcon Delete24}" />
-            </Grid>
+            <!--  Month Controls  -->
+            <ui:TextBox
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="0,0,5,0"
+                VerticalAlignment="Center"
+                PlaceholderText="Enter Month Name..."
+                Text="{Binding ViewModel.NewMonthName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+            <ui:NumberBox
+                Grid.Row="0"
+                Grid.Column="1"
+                Margin="5,0,5,0"
+                Icon="{ui:SymbolIcon NumberSymbolSquare24}"
+                MaxDecimalPlaces="0"
+                Maximum="100"
+                Minimum="0"
+                PlaceholderText="# of Days..."
+                SmallChange="1"
+                Value="{Binding ViewModel.NewMonthDayCount, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+            <ui:Button
+                Grid.Row="1"
+                Grid.Column="0"
+                Height="30"
+                Appearance="Primary"
+                Command="{Binding ViewModel.AddMonthToCollectionCommand, Mode=OneWay}"
+                Content="Add Month Calendar"
+                Icon="{ui:SymbolIcon CalendarAdd24}" />
+            <ui:Button
+                Grid.Row="1"
+                Grid.Column="1"
+                Height="30"
+                Margin="5,0,5,0"
+                HorizontalAlignment="Right"
+                Appearance="Secondary"
+                Command="{Binding ViewModel.RemoveMonthFromCollectionCommand, Mode=OneWay}"
+                CommandParameter="{Binding ElementName=NewMonthListView, Path=SelectedIndex}"
+                Content="Remove Month"
+                Icon="{ui:SymbolIcon Delete24}" />
 
             <!--  Month LV  -->
             <Border
-                Grid.Row="1"
+                Grid.Row="2"
                 Grid.Column="0"
-                Margin="10"
+                Grid.ColumnSpan="2"
+                Margin="0,5,5,5"
                 BorderBrush="{ui:ThemeResource AccentTextFillColorTertiaryBrush}"
                 BorderThickness="0,2,0,2"
                 CornerRadius="4">
@@ -248,48 +243,40 @@
                 </ListView>
             </Border>
 
-            <Grid Grid.Row="0" Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <ui:TextBox
-                    Grid.Column="0"
-                    Margin="10"
-                    VerticalAlignment="Center"
-                    PlaceholderText="Enter Day Name..."
-                    Text="{Binding ViewModel.NewDayName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                <ui:Button
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Height="30"
-                    Margin="10"
-                    Appearance="Primary"
-                    Command="{Binding ViewModel.AddDayToCollectionCommand, Mode=OneWay}"
-                    Content="Add Day to List"
-                    Icon="{ui:SymbolIcon CalendarAdd24}" />
-                <ui:Button
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Height="30"
-                    Margin="10,0,0,0"
-                    Appearance="Secondary"
-                    Command="{Binding ViewModel.RemoveDayFromCollectionCommand, Mode=OneWay}"
-                    CommandParameter="{Binding ElementName=DayNameListView, Path=SelectedIndex}"
-                    Content="Remove Day"
-                    Icon="{ui:SymbolIcon Delete24}" />
-            </Grid>
+            <!--  Day Controls  -->
+            <ui:TextBox
+                Grid.Column="2"
+                Margin="5,0,5,0"
+                VerticalAlignment="Center"
+                PlaceholderText="Enter Day Name..."
+                Text="{Binding ViewModel.NewDayName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+            <ui:Button
+                Grid.Row="1"
+                Grid.Column="2"
+                Height="30"
+                Margin="5,0,5,0"
+                Appearance="Primary"
+                Command="{Binding ViewModel.AddDayToCollectionCommand, Mode=OneWay}"
+                Content="Add Day to List"
+                Icon="{ui:SymbolIcon CalendarAdd24}" />
+            <ui:Button
+                Grid.Row="1"
+                Grid.Column="3"
+                Height="30"
+                Margin="5,0,0,0"
+                HorizontalAlignment="Right"
+                Appearance="Secondary"
+                Command="{Binding ViewModel.RemoveDayFromCollectionCommand, Mode=OneWay}"
+                CommandParameter="{Binding ElementName=DayNameListView, Path=SelectedIndex}"
+                Content="Remove Day"
+                Icon="{ui:SymbolIcon Delete24}" />
 
             <!--  Day LV  -->
             <Border
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="10"
+                Grid.Row="2"
+                Grid.Column="2"
+                Grid.ColumnSpan="2"
+                Margin="5,5,0,5"
                 BorderBrush="{ui:ThemeResource AccentTextFillColorTertiaryBrush}"
                 BorderThickness="0,2,0,2"
                 CornerRadius="4">
@@ -300,12 +287,16 @@
                     ItemsSource="{Binding ViewModel.DayNameListViewItems}" />
             </Border>
 
-
-
             <!--  Specific Day Set  -->
-            <TextBlock Grid.Row="2" Text="Enter specific date data to sync your calendar:" />
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0,5,0,5"
+                VerticalAlignment="Bottom"
+                Text="Enter specific date data to sync your calendar:" />
 
-            <Grid Grid.Row="3" Grid.ColumnSpan="2">
+            <Grid Grid.Row="4" Grid.ColumnSpan="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -320,22 +311,25 @@
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="3"
+                    Margin="5,0,0,0"
                     Text="Day Name:" />
                 <ComboBox
                     Grid.Row="1"
                     Grid.Column="3"
                     Height="60"
+                    Margin="5,0,0,0"
                     ItemsSource="{Binding ViewModel.DayNameListViewItems, Mode=TwoWay}"
                     SelectedIndex="{Binding ViewModel.BaseDateIndexInput, Mode=TwoWay}" />
-
 
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="2"
+                    Margin="5,0,5,0"
                     Text="Day Number:" />
                 <ui:NumberBox
                     Grid.Row="1"
                     Grid.Column="2"
+                    Margin="5,0,5,0"
                     Icon="{ui:SymbolIcon NumberSymbolSquare24}"
                     IsEnabled="{Binding ViewModel.IsSpecificDayNumberSelectEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:CreateCalendarPage}}"
                     MaxDecimalPlaces="0"
@@ -345,16 +339,16 @@
                     SmallChange="1"
                     Value="{Binding ViewModel.BaseDayInput, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
-
-
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="1"
+                    Margin="5,0,5,0"
                     Text="Month:" />
                 <ComboBox
                     Grid.Row="1"
                     Grid.Column="1"
                     Height="60"
+                    Margin="5,0,5,0"
                     DisplayMemberPath="Name"
                     ItemsSource="{Binding ViewModel.MonthListViewItems, Mode=TwoWay}"
                     SelectedIndex="{Binding ViewModel.BaseMonthIndexInput, Mode=TwoWay}" />
@@ -362,10 +356,12 @@
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="0"
+                    Margin="0,0,5,0"
                     Text="Year:" />
                 <ui:NumberBox
                     Grid.Row="3"
                     Grid.Column="0"
+                    Margin="0,0,5,0"
                     Icon="{ui:SymbolIcon NumberSymbolSquare24}"
                     MaxDecimalPlaces="0"
                     Maximum="10000"
@@ -373,65 +369,7 @@
                     PlaceholderText="Year"
                     SmallChange="1"
                     Value="{Binding ViewModel.BaseYearInput, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-
-
-
             </Grid>
-
-            <!--TextBlock
-                Grid.Column="2"
-                Margin="10"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontSize="14"
-                FontWeight="Medium"
-                Text="Specify a date:"
-                TextAlignment="Center" />
-            <Grid Grid.Row="1" Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Year:" />
-                <ui:NumberBox
-                    Grid.Row="1"
-                    Icon="{ui:SymbolIcon NumberSymbolSquare24}"
-                    MaxDecimalPlaces="0"
-                    Maximum="10000"
-                    Minimum="-10000"
-                    PlaceholderText="Year"
-                    SmallChange="1"
-                    Value="{Binding ViewModel.BaseDate.DateYear, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                <TextBlock Grid.Row="2" Text="Month: " />
-                <ListBox
-                    x:Name="baseMonthListBox"
-                    Grid.Row="3"
-                    ItemsSource="{Binding ViewModel.MonthListViewItems}"
-                    SelectedItem="{Binding ViewModel.BaseDate.DateMonth}" />
-                <TextBlock Grid.Row="4" Text="Day: " />
-
-                <ui:NumberBox
-                    Grid.Row="5"
-                    Icon="{ui:SymbolIcon NumberSymbolSquare24}"
-                    MaxDecimalPlaces="0"
-                    Maximum="100"
-                    Minimum="1"
-                    PlaceholderText="Day"
-                    SmallChange="1"
-                    Value="{Binding ViewModel.BaseDate.DateDay, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-
-
-
-            </Grid-->
-
-
         </Grid>
-
     </Grid>
 </Page>

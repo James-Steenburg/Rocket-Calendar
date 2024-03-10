@@ -2,6 +2,7 @@
     x:Class="RocketCalendar.Views.RocketCalendarView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:RocketCalendar.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:RocketCalendar.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -23,11 +24,20 @@
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <ui:FluentWindow.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterKey" />
+    </ui:FluentWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+
+        <ui:TitleBar
+            x:Name="TitleBar"
+            Title="{Binding ViewModel.ApplicationTitle}"
+            Grid.Row="0"
+            Icon="{ui:SymbolIcon Rocket24}" />
 
         <ui:NavigationView
             x:Name="RootNavigation"
@@ -37,23 +47,17 @@
             MenuItemsSource="{Binding ViewModel.NavigationItems, Mode=OneWay}"
             OpenPaneLength="200"
             Transition="FadeInWithSlide">
-            <!--ui:NavigationView.AutoSuggestBox>
-                <ui:AutoSuggestBox
-                    x:Name="AutoSuggestBox"
-                    Margin="0,0,0,5"
-                    PlaceholderText="Search">
-                    <ui:AutoSuggestBox.Icon>
-                        <ui:IconSourceElement>
-                            <ui:SymbolIconSource Symbol="Search24" />
-                        </ui:IconSourceElement>
-                    </ui:AutoSuggestBox.Icon>
-                </ui:AutoSuggestBox>
-            </ui:NavigationView.AutoSuggestBox-->
             <ui:NavigationView.Header>
-                <ui:BreadcrumbBar
+                <!--
+                    ui:BreadcrumbBar
                     Margin="42,32,0,0"
                     FontSize="28"
-                    FontWeight="DemiBold" />
+                    FontWeight="DemiBold" /
+                -->
+                <ProgressBar
+                    Margin="3,0,0,5"
+                    IsIndeterminate="True"
+                    Visibility="{Binding ViewModel.IsStatusBarVisible, Converter={StaticResource BooleanToVisibilityConverterKey}}" />
             </ui:NavigationView.Header>
             <ui:NavigationView.ContentOverlay>
                 <Grid>
@@ -62,13 +66,5 @@
                 </Grid>
             </ui:NavigationView.ContentOverlay>
         </ui:NavigationView>
-
-
-
-        <ui:TitleBar
-            Title="{Binding ViewModel.ApplicationTitle, Mode=OneWay}"
-            Grid.Row="0"
-            Icon="pack://application:,,,/Assets/applicationIcon-256.png" />
-
     </Grid>
 </ui:FluentWindow>

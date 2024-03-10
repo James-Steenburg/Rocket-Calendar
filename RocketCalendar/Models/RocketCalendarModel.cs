@@ -31,6 +31,12 @@ namespace RocketCalendar.Models
         [ObservableProperty]
         private int _currentYear;
 
+        [ObservableProperty]
+        private RocketEvent _wipEventPlaceholder;
+
+        [ObservableProperty]
+        private ObservableCollection<RocketEvent> _repeatingEventCollection;
+
         public RocketCalendarModel
             (
             string calendarName,
@@ -38,6 +44,7 @@ namespace RocketCalendar.Models
             ObservableCollection<RocketMonth> monthCollection, 
             ObservableCollection<string> dayNameCollection, 
             ObservableCollection<RocketEvent> eventCollection, 
+            ObservableCollection<RocketEvent> repeatingEventCollection,
             int currentMonth, 
             int currentYear
             )
@@ -47,6 +54,7 @@ namespace RocketCalendar.Models
             MonthCollection = monthCollection;
             DayNameCollection = dayNameCollection;
             EventCollection = eventCollection;
+            RepeatingEventCollection = repeatingEventCollection;
             CurrentMonth = currentMonth;
             CurrentYear = currentYear;
         }

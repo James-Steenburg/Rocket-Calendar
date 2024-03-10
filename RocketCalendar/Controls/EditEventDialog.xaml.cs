@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using RocketCalendar.Models;
+using RocketCalendar.ViewModels.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,11 +32,32 @@ namespace RocketCalendar.Controls
             set { SetValue(RocketEventProperty, value); }
         }
 
-        public EditEventDialog(ContentPresenter contentPresenter, RocketEvent inputRocketEvent) : base(contentPresenter)
+        private RocketCalendarModel _rocketCalendar;
+
+        public int SelectedInputMonthMaxDays
         {
-            EdittedEvent = inputRocketEvent;
+            get
+            {
+                return 10;
+            }
+        }
+
+        public EditEventDialog(ContentPresenter contentPresenter, RocketCalendarModel rocketCalendar) : base(contentPresenter)
+        {
+            //ViewModel = calendarViewModel;
+
+            //DataContext = calendarViewModel;
+
+            //EdittedEvent = ViewModel.ActiveCalendar.WipEventPlaceholder;
+
+            //DataContext = this;
+            //_rocketCalendar = rocketCalendar;
+            //EdittedEvent = _rocketCalendar.WipEventPlaceholder;
+
             InitializeComponent();
             
         }
+
+        public CalendarViewModel ViewModel { get; }
     }
 }

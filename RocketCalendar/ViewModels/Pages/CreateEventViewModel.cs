@@ -48,8 +48,8 @@ namespace RocketCalendar.ViewModels.Pages
         [NotifyPropertyChangedFor(nameof(IsCreateEventButtonEnabled))]
         private int _eventYearInput;
 
-        [ObservableProperty]
-        private bool _isRepeatingEvent;
+        //[ObservableProperty]
+        //private bool _isRepeatingEvent;
 
         [ObservableProperty]
         private int _weekRepeatInterval;
@@ -169,10 +169,22 @@ namespace RocketCalendar.ViewModels.Pages
                     EventTitle,
                     EventDescription,
                     IsPrivateEvent,
-                    SelectedBrushIndex
+                    SelectedBrushIndex, 
+                    WeekRepeatInterval, 
+                    MonthRepeatInterval, 
+                    YearRepeatInterval
                     );
 
-                ActiveCalendar.EventCollection.Add(newEvent);
+                if(!newEvent.IsRepeatingEvent)
+                {
+                    ActiveCalendar.EventCollection.Add(newEvent);
+                }
+                else if(newEvent.IsRepeatingEvent)
+                {
+                    ActiveCalendar.RepeatingEventCollection.Add(newEvent);
+                }
+
+                
 
                 SnackbarAppearanceComboBoxSelectedIndex = 3;
                 _snackbarService.Show(
@@ -227,6 +239,30 @@ namespace RocketCalendar.ViewModels.Pages
 
 
             _isInitialized = true;
+        }
+
+        private void ShowErrorSnackbar(string message)
+        {
+            SnackbarAppearanceComboBoxSelectedIndex = 5;
+            _snackbarService.Show(
+            "Error:",
+            message,
+            _snackbarAppearance,
+            new SymbolIcon(SymbolRegular.ErrorCircle24),
+            TimeSpan.FromSeconds(3)
+            );
+        }
+
+        private void ShowSuccessSnackbar(string message)
+        {
+            SnackbarAppearanceComboBoxSelectedIndex = 3;
+            _snackbarService.Show(
+            "Success!",
+            message,
+            _snackbarAppearance,
+            new SymbolIcon(SymbolRegular.CheckmarkCircle24),
+            TimeSpan.FromSeconds(3)
+            );
         }
     }
 }

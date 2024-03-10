@@ -34,7 +34,7 @@
 
     </Page.Resources>
 
-    <Grid>
+    <Grid Margin="0,5,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="10" />
@@ -263,28 +263,36 @@
                                                             </Style.Triggers>
                                                         </Style>
                                                     </Grid.Style>
-                                                    <TextBlock
+                                                    <Border
                                                         Grid.Column="0"
                                                         Margin="3"
                                                         HorizontalAlignment="Left"
-                                                        VerticalAlignment="Top"
-                                                        Text="{Binding DateDay}">
+                                                        VerticalAlignment="Top">
+                                                        <TextBlock Text="{Binding DateDay}">
 
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="TextBlock">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
 
-                                                                <Style.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Background" Value="Red" />
-                                                                    </Trigger>
-                                                                    <DataTrigger Binding="{Binding IsPlaceHolder}" Value="True">
-                                                                        <Setter Property="Visibility" Value="Hidden" />
-                                                                        <Setter Property="Background" Value="Yellow" />
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </TextBlock.Style>
-                                                    </TextBlock>
+                                                                    <Style.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Background" Value="Red" />
+                                                                        </Trigger>
+                                                                        <DataTrigger Binding="{Binding IsPlaceHolder}" Value="True">
+                                                                            <Setter Property="Visibility" Value="Hidden" />
+                                                                            <Setter Property="Background" Value="Yellow" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                        <Border.InputBindings>
+                                                            <MouseBinding
+                                                                Command="{Binding ViewModel.OpenAddOrEditEventWindowCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:CalendarPage}}"
+                                                                CommandParameter="{Binding}"
+                                                                MouseAction="LeftClick" />
+                                                        </Border.InputBindings>
+                                                    </Border>
+
 
                                                     <ListView
                                                         x:Name="DayEventList"

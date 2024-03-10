@@ -51,9 +51,14 @@ namespace RocketCalendar
                     //Content Dialog Services
                     services.AddSingleton<IContentDialogService, ContentDialogService>();
 
+                    services.AddSingleton<WindowsProviderService>();
+
                     // Main window with navigation
                     services.AddSingleton<INavigationWindow, Views.RocketCalendarView>();
                     services.AddSingleton<ViewModels.RocketCalendarViewModel>();
+
+                    services.AddSingleton<Views.AddOrEditEventWindow>();
+                    services.AddSingleton<ViewModels.AddOrEditEventViewModel>();
 
                     // Global App Data
                     services.AddSingleton<GlobalAppData>();

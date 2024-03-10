@@ -16,7 +16,7 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid Margin="0,5,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="*" />
@@ -32,6 +32,7 @@
 
         <TextBlock
             Margin="10,0,0,0"
+            VerticalAlignment="Top"
             FontSize="20"
             FontWeight="Medium"
             Text="Create Event Page" />
@@ -136,7 +137,8 @@
                     <TextBlock
                         Margin="5,0,5,0"
                         VerticalAlignment="Center"
-                        Text="X Week(s): " />
+                        Text="X Week(s): "
+                        Visibility="Hidden" />
                     <ui:NumberBox
                         MinWidth="150"
                         Margin="10,0,0,0"
@@ -145,8 +147,9 @@
                         MaxDecimalPlaces="0"
                         Maximum="{Binding ViewModel.ActiveCalendar.MonthCollection.Count, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:CreateEventPage}}"
                         Minimum="0"
-                        PlaceholderText="-"
+                        PlaceholderText="0"
                         SmallChange="1"
+                        Visibility="Hidden"
                         Value="{Binding ViewModel.WeekRepeatInterval, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
                 </StackPanel>
@@ -163,7 +166,7 @@
                         MaxDecimalPlaces="0"
                         Maximum="{Binding ViewModel.ActiveCalendar.MonthCollection.Count, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:CreateEventPage}}"
                         Minimum="0"
-                        PlaceholderText="-"
+                        PlaceholderText="0"
                         SmallChange="1"
                         Value="{Binding ViewModel.MonthRepeatInterval, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
@@ -181,7 +184,7 @@
                         MaxDecimalPlaces="0"
                         Maximum="10000"
                         Minimum="0"
-                        PlaceholderText="-"
+                        PlaceholderText="0"
                         SmallChange="1"
                         Value="{Binding ViewModel.YearRepeatInterval, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 

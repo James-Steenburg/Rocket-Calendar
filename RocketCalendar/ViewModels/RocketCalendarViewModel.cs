@@ -44,6 +44,13 @@ using RocketCalendar.Helpers;
 
 
 TO DO:
+    1. Add AddOrEditEventDialog to CalendarPage
+    2. Implement File IO functionality
+    3. Implement Repeat Event functionality
+            Remove Weekly Repeat
+    4. fix SaveOverEvent, think youre passing in the edittedEvent instead of the old event.
+
+
     Move Day and Calendar controls to custom controls: https://www.youtube.com/watch?v=t8zB_SYGOF0
     Add Fonts: Montserrat or AzeretMono-thin(DRS)?
     Event Repeat property?
@@ -52,6 +59,15 @@ TO DO:
     Maybe?
     Change Navigation items to different calendars, settings and create calendar
         Create Event will be moved to an external window.
+
+Unused Content to check:
+    1. Dialog Content Resources for CreateCalendarPage
+    2. AddOrEdit VM
+    3. Controls Folder
+
+Version 2:
+    1. Multiday events
+    2. Multi Calendar Support
  */
 
 
@@ -66,6 +82,9 @@ namespace RocketCalendar.ViewModels
         private string _applicationTitle = String.Empty;
 
         [ObservableProperty]
+        private bool _isStatusBarVisible;
+
+        [ObservableProperty]
         private ObservableCollection<object> _navigationItems = new();
 
         [ObservableProperty]
@@ -76,6 +95,8 @@ namespace RocketCalendar.ViewModels
 
         public RocketCalendarViewModel(INavigationService navigationService, GlobalAppData appData)
         {
+            IsStatusBarVisible = true;
+
             if (!_isInitialized)
                 InitializeViewModel();
 
@@ -120,6 +141,10 @@ namespace RocketCalendar.ViewModels
                         new RocketEvent(new RocketDate(3,2,2024),"Kratos","Just playing God of War",true,10),
                         new RocketEvent(new RocketDate(5,6,2024),"Bday","wow 30",true,10)
                     },
+                    new ObservableCollection<RocketEvent>()
+                    {
+                        //repeating events here..
+                    },
                     2,
                     2024
                     );
@@ -162,7 +187,7 @@ namespace RocketCalendar.ViewModels
 
         private void InitializeViewModel()
         {
-            ApplicationTitle = "Rocket Calendar";
+            ApplicationTitle = "Rocket | Calendar";
 
             NavigationItems = new ObservableCollection<object>
         {
