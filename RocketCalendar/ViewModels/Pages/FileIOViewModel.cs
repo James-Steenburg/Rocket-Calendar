@@ -140,7 +140,7 @@ namespace RocketCalendar.ViewModels.Pages
                 {
                     FileName = _appData.ActiveRocketCalendar.CalendarName,
                     InitialDirectory = appDataFolder,
-                    Filter = "Rocket xml files (*.xml)|*.xml"    //change to excel extension
+                    Filter = "Excel files (*.xlsx;*.xlsm;*.xlsb;*.xltx)|*.xlsx;*.xlsm;*.xlsb;*.xltx|All files (*.*)|*.*"
                 };
 
                 if (saveFileDialog.ShowDialog() != true)
@@ -148,18 +148,19 @@ namespace RocketCalendar.ViewModels.Pages
                     return;
                 }
 
-                if (!File.Exists(saveFileDialog.FileName))
-                {
-                    return;
-                }
-
                 if (IncludePrivateEvents)
                 {
-
-                } 
+                    string res = io.SaveEventList_Excel(_appData.ActiveRocketCalendar.EventCollection, saveFileDialog.FileName);
+                }
                 else
                 {
-
+                    ObservableCollection<RocketEvent> publicEventsCollection = new ObservableCollection<RocketEvent>();
+                    var publicEvents = _appData.ActiveRocketCalendar.EventCollection.Where(e => e.IsPrivate == false);
+                    foreach (var item in publicEvents)
+                    {
+                        publicEventsCollection.Add(item);
+                    }
+                    string res = io.SaveEventList_Excel(publicEventsCollection, saveFileDialog.FileName);
                 }
 
                 ShowSuccessSnackbar("Your event list was saved to an Excel file");
@@ -167,6 +168,44 @@ namespace RocketCalendar.ViewModels.Pages
             catch
             {
                 ShowErrorSnackbar("The application failed to save your event list to an Excel file");
+            }
+        }
+
+        [RelayCommand]
+        private void ImportEventListFromExcel()
+        {
+            try
+            {
+                //Import Event List from Excel here..
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string appDataFolder = Path.Combine(localAppData, "RocketCalendar");
+
+                if (!Directory.Exists(appDataFolder))
+                {
+                    Directory.CreateDirectory(appDataFolder);
+                }
+
+                Microsoft.Win32.OpenFileDialog openFileDialog = new()
+                {
+                    InitialDirectory = appDataFolder,
+                    Filter = "Excel files (*.xlsx;*.xlsm;*.xlsb;*.xltx)|*.xlsx;*.xlsm;*.xlsb;*.xltx|All files (*.*)|*.*"
+                };
+
+                if (openFileDialog.ShowDialog() != true)
+                {
+                    return;
+                }
+
+                //RocketCalendarFileName = openFileDialog.FileName;
+
+                //Load Calendar from Filename here
+
+
+                ShowSuccessSnackbar("Your calendar was imported from a Xaml file");
+            }
+            catch
+            {
+                ShowErrorSnackbar("The application failed to import your calendar from a Xaml file");
             }
         }
 
@@ -220,6 +259,77 @@ namespace RocketCalendar.ViewModels.Pages
         }
 
         [RelayCommand]
+        private void ImportEventListFromXml()
+        {
+            try
+            {
+                //Import Event List from Xml here..
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string appDataFolder = Path.Combine(localAppData, "RocketCalendar");
+
+                if (!Directory.Exists(appDataFolder))
+                {
+                    Directory.CreateDirectory(appDataFolder);
+                }
+
+                Microsoft.Win32.OpenFileDialog openFileDialog = new()
+                {
+                    InitialDirectory = appDataFolder,
+                    Filter = "Rocket xml files (*.xml)|*.xml"
+                };
+
+                if (openFileDialog.ShowDialog() != true)
+                {
+                    //ShowErrorSnackbar("The application failed to import your event list from a Xml file. Verify you are selecting the correct file.");
+                    return;
+                }
+
+                var newEventList =  io.LoadEventList_XML(openFileDialog.FileName);
+
+                if(newEventList != null)
+                {
+                    var uiMessageBox = new Wpf.Ui.Controls.MessageBox
+                    {
+                        Title = "Event List Changes",
+                        Content = "Do you want to the loaded event list to be added to or overwrite your current event list?",
+                        PrimaryButtonText = "Add",
+                        PrimaryButtonAppearance = Wpf.Ui.Controls.ControlAppearance.Primary,
+                        SecondaryButtonText = "Overwrite",
+                        SecondaryButtonAppearance = Wpf.Ui.Controls.ControlAppearance.Danger
+                    };
+
+                    var result = uiMessageBox.ShowDialogAsync();
+
+                    if (result.Result.ToString() == "Primary")
+                    {
+                        foreach (RocketEvent e in newEventList)
+                        {
+                            _appData.ActiveRocketCalendar.EventCollection.Add(e);
+                        }
+                        ShowSuccessSnackbar("Your event list was imported from a Xml file");
+                    }
+                    else if (result.Result.ToString() == "Secondary")
+                    {
+                        _appData.ActiveRocketCalendar.EventCollection.Clear();
+                        foreach (RocketEvent e in newEventList)
+                        {
+                            _appData.ActiveRocketCalendar.EventCollection.Add(e);
+                        }
+                        ShowSuccessSnackbar("Your event list was imported from a Xml file");
+                    }
+                }
+                else
+                {
+                    ShowErrorSnackbar("The application failed to import your event list from a Xml file. Verify you are selecting the correct file.");
+                }
+            }
+            catch
+            {
+                ShowErrorSnackbar("The application failed to import your event list from a Xml file");
+            }
+        }
+
+        [RelayCommand]
         private void ExportCalendarToXml()
         {
             try
@@ -261,7 +371,7 @@ namespace RocketCalendar.ViewModels.Pages
         {
             try
             {
-                //Import Calendar from Xaml here..
+                //Import Calendar from Xml here..
                 string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 string appDataFolder = Path.Combine(localAppData, "RocketCalendar");
 
@@ -278,24 +388,38 @@ namespace RocketCalendar.ViewModels.Pages
 
                 if (openFileDialog.ShowDialog() != true)
                 {
+                    //ShowErrorSnackbar("The application failed to import your calendar from a Xml file. Verify you are selecting the correct file.");
                     return;
                 }
 
-                if (!File.Exists(openFileDialog.FileName))
+                var newCalendar = io.LoadCalendar_XML(openFileDialog.FileName);
+
+                if (newCalendar != null)
                 {
-                    return;
+                    var uiMessageBox = new Wpf.Ui.Controls.MessageBox
+                    {
+                        Title = "Calendar Data Change",
+                        Content = "Are you sure you want to load a new calendar? Unsaved data will be lost.",
+                        PrimaryButtonText = "Load New Calendar",
+                        PrimaryButtonAppearance = Wpf.Ui.Controls.ControlAppearance.Caution
+                    };
+
+                    var result = uiMessageBox.ShowDialogAsync();
+
+                    if (result.Result.ToString() == "Primary")
+                    {
+                        _appData.ActiveRocketCalendar = newCalendar;
+                        ShowSuccessSnackbar("Your event list was imported from a Xml file");
+                    }
                 }
-
-                RocketCalendarFileName = openFileDialog.FileName;
-
-                //Load Calendar from Filename here
-
-
-                ShowSuccessSnackbar("Your calendar was imported from a Xaml file");
+                else
+                {
+                    ShowErrorSnackbar("The application failed to import your calendar from a Xml file. Verify you are selecting the correct file.");
+                }
             }
             catch
             {
-                ShowErrorSnackbar("The application failed to import your calendar from a Xaml file");
+                ShowErrorSnackbar("The application failed to import your calendar from a Xml file");
             }
         }
 
