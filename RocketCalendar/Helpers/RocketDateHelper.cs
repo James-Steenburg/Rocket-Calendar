@@ -67,6 +67,53 @@ namespace RocketCalendar.Helpers
             return indexResult;
         }
 
+
+        public bool DoesRepeatingEventApplyToDate(RocketCalendarModel calendar, RocketEvent rEvent, RocketDate targetDate)
+        {
+            //This function assumes rEvent.EventDate.DateDay == targetDate.DateDay for performance reasons
+            int yearDiff = Math.Abs(targetDate.DateYear - rEvent.EventDate.DateYear);
+            int monthDiff = 0;
+
+            if(rEvent.YearRepeatInterval != 0)
+            {
+                //repeats over years
+                if(yearDiff % rEvent.YearRepeatInterval == 0 && rEvent.EventDate.DateMonth == targetDate.DateMonth && rEvent.EventDate.DateDay == targetDate.DateDay)
+                {
+                    return true;
+                }
+            }
+
+            if(rEvent.MonthRepeatInterval != 0)
+            {
+                //repeats over months
+                //Determine which date came first
+                if(targetDate.DateYear > rEvent.EventDate.DateYear)
+                {
+                    monthDiff += calendar.MonthCollection.Count * (yearDiff - 1);
+                    monthDiff += targetDate.DateMonth;
+                    monthDiff += calendar.MonthCollection.Count - rEvent.EventDate.DateMonth;
+                } 
+                else if(targetDate.DateYear < rEvent.EventDate.DateYear)
+                {
+                    monthDiff += calendar.MonthCollection.Count * (yearDiff - 1);
+                    monthDiff += rEvent.EventDate.DateMonth;
+                    monthDiff += calendar.MonthCollection.Count - targetDate.DateMonth;
+                }
+                else if(targetDate.DateYear == rEvent.EventDate.DateYear)
+                {
+                    monthDiff = Math.Abs(rEvent.EventDate.DateMonth -  targetDate.DateMonth);
+                }
+                
+                if(monthDiff % rEvent.MonthRepeatInterval == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
         //To delete later
         public string ConvertDayIndexToString(int index)
         {

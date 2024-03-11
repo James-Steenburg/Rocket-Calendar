@@ -44,11 +44,10 @@ using RocketCalendar.Helpers;
 
 
 TO DO:
-    1. Add AddOrEditEventDialog to CalendarPage
-    2. Implement File IO functionality
-    3. Implement Repeat Event functionality
-            Remove Weekly Repeat
-    4. fix SaveOverEvent, think youre passing in the edittedEvent instead of the old event.
+    1. Implement File IO functionality
+    2. Setup statusbar to show only when tasks are running
+    3. Implement Font
+    4. Create CommonApplicationData folder
 
 
     Move Day and Calendar controls to custom controls: https://www.youtube.com/watch?v=t8zB_SYGOF0
@@ -139,11 +138,8 @@ namespace RocketCalendar.ViewModels
                         new RocketEvent(new RocketDate(3,2,2024),"Jessie","Just playing God of War",false,8),
                         new RocketEvent(new RocketDate(3,2,2024),"Played","Just playing God of War",false,9),
                         new RocketEvent(new RocketDate(3,2,2024),"Kratos","Just playing God of War",true,10),
-                        new RocketEvent(new RocketDate(5,6,2024),"Bday","wow 30",true,10)
-                    },
-                    new ObservableCollection<RocketEvent>()
-                    {
-                        //repeating events here..
+                        new RocketEvent(new RocketDate(5,6,2024),"Bday","wow 30",true,10,0,1),
+                        new RocketEvent(new RocketDate(2,1,2024),"Every6months","wow 6",true,10,6,0)
                     },
                     2,
                     2024
@@ -197,14 +193,6 @@ namespace RocketCalendar.ViewModels
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
                 TargetPageType = typeof(Views.Pages.DashboardPage)
             },
-            /*
-            new NavigationViewItem()
-            {
-                Content = "Image Simulation",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.ImageMultiple24 },
-                TargetPageType = typeof(Views.Pages.ImagesDisplayPage)
-            },
-            */
             new NavigationViewItem()
             {
                 Content = "Calendar",

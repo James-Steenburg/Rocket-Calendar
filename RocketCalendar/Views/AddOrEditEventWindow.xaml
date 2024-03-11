@@ -88,6 +88,7 @@
                 Margin="10,0,0,0"
                 VerticalAlignment="Center"
                 Appearance="Primary"
+                Click="SaveButton_Click"
                 Command="{Binding ViewModel.SaveOverEventCommand, Mode=OneWay}"
                 CommandParameter="{Binding ViewModel.ActiveCalendar.WipEventPlaceholder}"
                 Content="Save Event Changes"
@@ -135,7 +136,8 @@
                     <TextBlock
                         Margin="5,0,5,0"
                         VerticalAlignment="Center"
-                        Text="X Week(s): " />
+                        Text="X Week(s): "
+                        Visibility="Hidden" />
                     <ui:NumberBox
                         MinWidth="150"
                         Margin="10,0,0,0"
@@ -146,7 +148,8 @@
                         Minimum="0"
                         PlaceholderText="-"
                         SmallChange="1"
-                        Value="{Binding ViewModel.ActiveCalendar.WipEventPlaceholder.WeekRepeatInterval, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        Visibility="Hidden"
+                        Value="{Binding ViewModel.ActiveCalendar.WipEventPlaceholder.MonthRepeatInterval, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
                 </StackPanel>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">

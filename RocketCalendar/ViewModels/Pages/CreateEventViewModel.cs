@@ -170,21 +170,11 @@ namespace RocketCalendar.ViewModels.Pages
                     EventDescription,
                     IsPrivateEvent,
                     SelectedBrushIndex, 
-                    WeekRepeatInterval, 
                     MonthRepeatInterval, 
                     YearRepeatInterval
                     );
 
-                if(!newEvent.IsRepeatingEvent)
-                {
-                    ActiveCalendar.EventCollection.Add(newEvent);
-                }
-                else if(newEvent.IsRepeatingEvent)
-                {
-                    ActiveCalendar.RepeatingEventCollection.Add(newEvent);
-                }
-
-                
+                ActiveCalendar.EventCollection.Add(newEvent);
 
                 SnackbarAppearanceComboBoxSelectedIndex = 3;
                 _snackbarService.Show(

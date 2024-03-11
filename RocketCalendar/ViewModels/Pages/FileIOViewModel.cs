@@ -1,12 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using RocketCalendar.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -17,35 +21,20 @@ namespace RocketCalendar.ViewModels.Pages
         private bool _isInitialized = false;
         private GlobalAppData _appData;
         private ISnackbarService _snackbarService;
+        RocketCalendar.Helpers.FileIOHelper io = new RocketCalendar.Helpers.FileIOHelper();
 
         [ObservableProperty]
         private bool _includePrivateEvents;
 
-        public FileIOViewModel(GlobalAppData appData, ISnackbarService snackbarService)
-        {
-            _appData = appData;
-            _snackbarService = snackbarService;
-        }
+        //unused?
+        [ObservableProperty]
+        private string _rocketEventListFileName;
 
-        public void OnNavigatedTo()
-        {
-            if (!_isInitialized)
-                InitializeViewModel();
-            
-            //pull whatever is needed from AppData here
-        }
+        //unused?
+        [ObservableProperty]
+        private string _rocketCalendarFileName;
 
-        public void OnNavigatedFrom()
-        {
-            //save anything needed in AppData - shouldn't need anything saved in this vm
-        }
-
-        private void InitializeViewModel()
-        {
-            //initialization ...
-
-            _isInitialized = true;
-        }
+        #region SnackbarService Support
 
         private ControlAppearance _snackbarAppearance = ControlAppearance.Secondary;
 
@@ -77,120 +66,248 @@ namespace RocketCalendar.ViewModels.Pages
             };
         }
 
+        private void ShowErrorSnackbar(string message)
+        {
+            SnackbarAppearanceComboBoxSelectedIndex = 5;
+            _snackbarService.Show(
+            "Error:",
+            message,
+            _snackbarAppearance,
+            new SymbolIcon(SymbolRegular.ErrorCircle24),
+            TimeSpan.FromSeconds(3)
+            );
+        }
+
+        private void ShowSuccessSnackbar(string message)
+        {
+            SnackbarAppearanceComboBoxSelectedIndex = 3;
+            _snackbarService.Show(
+            "Success!",
+            message,
+            _snackbarAppearance,
+            new SymbolIcon(SymbolRegular.CheckmarkCircle24),
+            TimeSpan.FromSeconds(3)
+            );
+        }
+
+        #endregion SnackbarService Support
+
+
+        public FileIOViewModel(GlobalAppData appData, ISnackbarService snackbarService)
+        {
+            _appData = appData;
+            _snackbarService = snackbarService;
+            
+        }
+
+        public void OnNavigatedTo()
+        {
+            if (!_isInitialized)
+                InitializeViewModel();
+            
+            //pull whatever is needed from AppData here
+        }
+
+        public void OnNavigatedFrom()
+        {
+            //save anything needed in AppData - shouldn't need anything saved in this vm
+        }
+
+        private void InitializeViewModel()
+        {
+            //initialization ...
+
+            _isInitialized = true;
+        }
+
+        
+
         [RelayCommand]
-        private void SaveToExcel()
+        private void ExportEventListToExcel()
         {
             try
             {
-                //Save To Excel here..
+                //Save Event List To Excel here..
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string appDataFolder = Path.Combine(localAppData, "RocketCalendar");
 
-                SnackbarAppearanceComboBoxSelectedIndex = 3;
-                _snackbarService.Show(
-                "Success!",
-                "Your event list was saved to an Excel file",
-                _snackbarAppearance,
-                new SymbolIcon(SymbolRegular.CheckmarkCircle24),
-                TimeSpan.FromSeconds(3)
-                );
+                if (!Directory.Exists(appDataFolder))
+                {
+                    Directory.CreateDirectory(appDataFolder);
+                }
+
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog()
+                {
+                    FileName = _appData.ActiveRocketCalendar.CalendarName,
+                    InitialDirectory = appDataFolder,
+                    Filter = "Rocket xml files (*.xml)|*.xml"    //change to excel extension
+                };
+
+                if (saveFileDialog.ShowDialog() != true)
+                {
+                    return;
+                }
+
+                if (!File.Exists(saveFileDialog.FileName))
+                {
+                    return;
+                }
+
+                if (IncludePrivateEvents)
+                {
+
+                } 
+                else
+                {
+
+                }
+
+                ShowSuccessSnackbar("Your event list was saved to an Excel file");
             }
             catch
             {
-                SnackbarAppearanceComboBoxSelectedIndex = 5;
-                _snackbarService.Show(
-                "Error:",
-                "The application failed to save your event list to an Excel file",
-                _snackbarAppearance,
-                new SymbolIcon(SymbolRegular.ErrorCircle24),
-                TimeSpan.FromSeconds(3)
-                );
+                ShowErrorSnackbar("The application failed to save your event list to an Excel file");
             }
         }
 
         [RelayCommand]
-        private void SaveToXaml()
+        private void ExportEventListToXml()
         {
             try
             {
-                //Save To Xaml here..
+                //Save Event List To Xaml here..
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string appDataFolder = Path.Combine(localAppData, "RocketCalendar");
 
-                SnackbarAppearanceComboBoxSelectedIndex = 3;
-                _snackbarService.Show(
-                "Success!",
-                "Your event list was saved to an Xaml file",
-                _snackbarAppearance,
-                new SymbolIcon(SymbolRegular.CheckmarkCircle24),
-                TimeSpan.FromSeconds(3)
-                );
+                if (!Directory.Exists(appDataFolder))
+                {
+                    Directory.CreateDirectory(appDataFolder);
+                }
+
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog()
+                {
+                    FileName = _appData.ActiveRocketCalendar.CalendarName + "_Events",
+                    InitialDirectory = appDataFolder,
+                    Filter = "Rocket xml files (*.xml)|*.xml"
+                };
+
+                if (saveFileDialog.ShowDialog() != true)
+                {
+                    return;
+                }
+
+                if (IncludePrivateEvents)
+                {
+                    io.SaveEventList_XML(_appData.ActiveRocketCalendar.EventCollection, saveFileDialog.FileName);
+                }
+                else
+                {
+                    ObservableCollection<RocketEvent> publicEventsCollection = new ObservableCollection<RocketEvent>();
+                    var publicEvents = _appData.ActiveRocketCalendar.EventCollection.Where(e => e.IsPrivate == false);
+                    foreach (var item in publicEvents)
+                    {
+                        publicEventsCollection.Add(item);
+                    }
+                    io.SaveEventList_XML(publicEventsCollection, saveFileDialog.FileName);
+                }
+
+                ShowSuccessSnackbar("Your event list was saved to an Xaml file");
             }
             catch
             {
-                SnackbarAppearanceComboBoxSelectedIndex = 5;
-                _snackbarService.Show(
-                "Error:",
-                "The application failed to save your event list to a Xaml file",
-                _snackbarAppearance,
-                new SymbolIcon(SymbolRegular.ErrorCircle24),
-                TimeSpan.FromSeconds(3)
-                );
+                ShowErrorSnackbar("The application failed to save your event list to a Xaml file");
             }
         }
 
         [RelayCommand]
-        private void ExportCalendarToXaml()
+        private void ExportCalendarToXml()
         {
             try
             {
                 //Export Calendar to Xaml here..
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string appDataFolder = Path.Combine(localAppData, "RocketCalendar");
 
-                SnackbarAppearanceComboBoxSelectedIndex = 3;
-                _snackbarService.Show(
-                "Success!",
-                "Your calendar was saved to a Xaml file",
-                _snackbarAppearance,
-                new SymbolIcon(SymbolRegular.CheckmarkCircle24),
-                TimeSpan.FromSeconds(3)
-                );
+                if (!Directory.Exists(appDataFolder))
+                {
+                    Directory.CreateDirectory(appDataFolder);
+                }
+
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog()
+                {
+                    FileName = _appData.ActiveRocketCalendar.CalendarName,
+                    InitialDirectory = appDataFolder,
+                    Filter = "Rocket xml files (*.xml)|*.xml"
+                };
+
+                if (saveFileDialog.ShowDialog() != true)
+                {
+                    return;
+                }
+
+                //save to SaveFileDialog.FileName here
+                io.SaveCalendar_XML(_appData.ActiveRocketCalendar, saveFileDialog.FileName);
+
+                ShowSuccessSnackbar("Your calendar was saved to a Xaml file");
             }
             catch
             {
-                SnackbarAppearanceComboBoxSelectedIndex = 5;
-                _snackbarService.Show(
-                "Error:",
-                "The application failed to save your calendar to a Xaml file",
-                _snackbarAppearance,
-                new SymbolIcon(SymbolRegular.ErrorCircle24),
-                TimeSpan.FromSeconds(3)
-                );
+                ShowErrorSnackbar("The application failed to save your calendar to a Xaml file");
             }
         }
 
         [RelayCommand]
-        private void ImportCalendarFromXaml()
+        private void ImportCalendarFromXml()
         {
             try
             {
                 //Import Calendar from Xaml here..
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string appDataFolder = Path.Combine(localAppData, "RocketCalendar");
 
-                SnackbarAppearanceComboBoxSelectedIndex = 3;
-                _snackbarService.Show(
-                "Success!",
-                "Your calendar was imported from a Xaml file",
-                _snackbarAppearance,
-                new SymbolIcon(SymbolRegular.CheckmarkCircle24),
-                TimeSpan.FromSeconds(3)
-                );
+                if(!Directory.Exists(appDataFolder))
+                {
+                    Directory.CreateDirectory(appDataFolder);
+                }
+
+                Microsoft.Win32.OpenFileDialog openFileDialog = new()
+                {
+                    InitialDirectory = appDataFolder,
+                    Filter = "Rocket xml files (*.xml)|*.xml"
+                };
+
+                if (openFileDialog.ShowDialog() != true)
+                {
+                    return;
+                }
+
+                if (!File.Exists(openFileDialog.FileName))
+                {
+                    return;
+                }
+
+                RocketCalendarFileName = openFileDialog.FileName;
+
+                //Load Calendar from Filename here
+
+
+                ShowSuccessSnackbar("Your calendar was imported from a Xaml file");
             }
             catch
             {
-                SnackbarAppearanceComboBoxSelectedIndex = 5;
-                _snackbarService.Show(
-                "Error:",
-                "The application failed to import your calendar from a Xaml file",
-                _snackbarAppearance,
-                new SymbolIcon(SymbolRegular.ErrorCircle24),
-                TimeSpan.FromSeconds(3)
-                );
+                ShowErrorSnackbar("The application failed to import your calendar from a Xaml file");
             }
+        }
+
+
+        private void SaveEventListToExcel(string fileName)
+        {
+
+        }
+
+        private void SaveEventListToXml(string fileName)
+        {
+
         }
     }
 }

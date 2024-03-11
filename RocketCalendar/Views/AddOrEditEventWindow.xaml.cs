@@ -34,5 +34,10 @@ namespace RocketCalendar.Views
 
             InitializeComponent();
         }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

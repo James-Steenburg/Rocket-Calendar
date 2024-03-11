@@ -45,7 +45,16 @@ namespace RocketCalendar.ViewModels.Pages
         [RelayCommand]
         private void DecrementDisplayMonth(object cmdParameter)
         {
-            ActiveCalendar.CurrentMonth--;
+            if (ActiveCalendar.CurrentMonth > 0)
+            {
+                ActiveCalendar.CurrentMonth--;
+            }
+            else
+            {
+                ActiveCalendar.CurrentMonth = ActiveCalendar.MonthCollection.Count - 1;
+                ActiveCalendar.CurrentYear--;
+            }
+
             OnPropertyChanged(nameof(GeneratedWeeks));
             OnPropertyChanged(nameof(SelectedRocketMonthIndex));
         }
@@ -53,7 +62,16 @@ namespace RocketCalendar.ViewModels.Pages
         [RelayCommand] 
         private void IncrementDisplayMonth(object cmdParameter)
         {
-            ActiveCalendar.CurrentMonth++;
+            if (ActiveCalendar.CurrentMonth < ActiveCalendar.MonthCollection.Count - 1)
+            {
+                ActiveCalendar.CurrentMonth++;
+            }
+            else
+            {
+                ActiveCalendar.CurrentMonth = 0;
+                ActiveCalendar.CurrentYear++;
+            }
+            
             OnPropertyChanged(nameof(GeneratedWeeks));
             OnPropertyChanged(nameof(SelectedRocketMonthIndex));
         }
@@ -121,49 +139,28 @@ namespace RocketCalendar.ViewModels.Pages
         }
 
         [RelayCommand]
-        private void SaveOverEvent(RocketEvent eventToRemove) //needs rework
+        private void SaveOverEvent(RocketEvent eventToRemove)
         {
             try
             {
-                RocketEvent newEvent = ActiveCalendar.WipEventPlaceholder;
-
-                if (!eventToRemove.IsRepeatingEvent)
+                if (EventIndexBeingEditted != null && EventIndexBeingEditted >= 0 && EventIndexBeingEditted < ActiveCalendar.EventCollection.Count)
                 {
-                    ActiveCalendar.EventCollection.Remove(eventToRemove);
+                    //Remove EdittedEvent
+                    ActiveCalendar.EventCollection.RemoveAt((int)EventIndexBeingEditted);
 
-                    if (!newEvent.IsRepeatingEvent)
-                    {
-                        ActiveCalendar.EventCollection.Add(newEvent);
-                    }
-                    else if (newEvent.IsRepeatingEvent)
-                    {
-                        ActiveCalendar.RepeatingEventCollection.Add(newEvent);
-                    }
-                }
-                else if (eventToRemove.IsRepeatingEvent)
-                {
-                    ActiveCalendar.RepeatingEventCollection.Remove(eventToRemove);
-
-                    if (!newEvent.IsRepeatingEvent)
-                    {
-                        ActiveCalendar.EventCollection.Add(newEvent);
-                    }
-                    else if (newEvent.IsRepeatingEvent)
-                    {
-                        ActiveCalendar.RepeatingEventCollection.Add(newEvent);
-                    }
                 }
 
-                ShowSuccessSnackbar("Event updated: " + newEvent.EventName);
+                //Add new event
+                ActiveCalendar.EventCollection.Add(ActiveCalendar.WipEventPlaceholder);
+                OnPropertyChanged(nameof(GeneratedWeeks));
+
+                ShowSuccessSnackbar("Event updated: " + ActiveCalendar.WipEventPlaceholder.EventName);
 
             }
             catch
             {
                 ShowErrorSnackbar("The application failed to update your event.");
             }
-
-
-
         }
 
         [RelayCommand]
@@ -176,10 +173,7 @@ namespace RocketCalendar.ViewModels.Pages
                 WindowTitle = "Rocket | Edit Event Window";
                 ActiveCalendar.WipEventPlaceholder = EditedEvent;
 
-                EventDayInput = ActiveCalendar.WipEventPlaceholder.EventDate.DateDay;
-                EventMonthIndexInput = ActiveCalendar.WipEventPlaceholder.EventDate.DateMonth;
-                EventYearInput = ActiveCalendar.WipEventPlaceholder.EventDate.DateYear;
-
+                EventIndexBeingEditted = ActiveCalendar.EventCollection.IndexOf(EditedEvent);
 
                 AddOrEditEventWindow addOrEditEventWin = new AddOrEditEventWindow(this);
                 addOrEditEventWin.ShowDialog();
@@ -187,11 +181,13 @@ namespace RocketCalendar.ViewModels.Pages
             }
             else if (obj is RocketDate)
             {
-                RocketEvent rEvent = new RocketEvent((RocketDate)obj, "Event Name..", "Event Description..", false, 0, 0, 0, 0);
+                RocketEvent rEvent = new RocketEvent((RocketDate)obj, "Event Name..", "Event Description..", false, 0, 0, 0);
 
                 WindowTitle = "Rocket | Add Event Window";
 
                 ActiveCalendar.WipEventPlaceholder = rEvent;
+
+                EventIndexBeingEditted = null;
 
                 AddOrEditEventWindow addOrEditEventWin = new AddOrEditEventWindow(this);
                 addOrEditEventWin.ShowDialog();
@@ -265,6 +261,8 @@ namespace RocketCalendar.ViewModels.Pages
 
         private WindowsProviderService _windowsProviderService;
         private ISnackbarService _snackbarService;
+        private IContentDialogService _contentDialogService;
+
 
         [ObservableProperty]
         private RocketCalendarModel _activeCalendar;
@@ -275,7 +273,6 @@ namespace RocketCalendar.ViewModels.Pages
 
         [ObservableProperty]
         private string _windowTitle;
-
 
         [ObservableProperty]
         private ObservableCollection<RocketBrush> _rocketBrushList = new ObservableCollection<RocketBrush>()
@@ -306,13 +303,14 @@ namespace RocketCalendar.ViewModels.Pages
         private int _selectedBrushIndex;
 
         [ObservableProperty]
-        private int _weekRepeatInterval;
-
-        [ObservableProperty]
         private int _monthRepeatInterval;
 
         [ObservableProperty]
         private int _YearRepeatInterval;
+
+        [ObservableProperty]
+        private int? _eventIndexBeingEditted;
+
 
         [ObservableProperty]
         //[NotifyPropertyChangedFor(nameof(IsCreateEventButtonEnabled))]
@@ -346,12 +344,6 @@ namespace RocketCalendar.ViewModels.Pages
             }
         }
 
-        
-
-        //[ObservableProperty]
-        //[NotifyPropertyChangedFor(nameof(GeneratedWeeks))]
-        //private int _selectedRocketMonthIndex;
-
         public int SelectedRocketMonthIndex
         {
             get 
@@ -370,33 +362,42 @@ namespace RocketCalendar.ViewModels.Pages
             }
         }
 
-        //[ObservableProperty]
-        //private ObservableCollection<RocketWeekModel> _weeksCollection;
-
         [ObservableProperty]
         private RocketEvent _editedEvent;
 
         //[ObservableProperty]
         //private ObservableCollection<RocketEvent> _currentEvents;
 
-        [ObservableProperty]
-        private DataTable _myDataTable;
-        private IContentDialogService _contentDialogService;
+        //[ObservableProperty]
+        //private DataTable _myDataTable;
 
-        
+        //[ObservableProperty]
+        //[NotifyPropertyChangedFor(nameof(GeneratedWeeks))]
+        //private int _selectedRocketMonthIndex;
 
-        
+        //[ObservableProperty]
+        //private ObservableCollection<RocketWeekModel> _weeksCollection;
+
         public ObservableCollection<RocketWeekModel> GeneratedWeeks
         {
             get
             {
                 var currentEvents = ActiveCalendar.EventCollection.Where(e => e.EventDate.DateYear == ActiveCalendar.CurrentYear && e.EventDate.DateMonth == ActiveCalendar.CurrentMonth);
 
-                bool checkForEvents = (ActiveCalendar.EventCollection.Any(e => e.EventDate.DateYear == ActiveCalendar.CurrentYear && e.EventDate.DateMonth == ActiveCalendar.CurrentMonth));
+                bool checkForEvents = ActiveCalendar.EventCollection.Any(e => e.EventDate.DateYear == ActiveCalendar.CurrentYear && e.EventDate.DateMonth == ActiveCalendar.CurrentMonth);
 
                 if(currentEvents == null)
                 {
                     checkForEvents = false;
+                }
+
+                var currentRepeatingEvents = ActiveCalendar.EventCollection.Where(e => e.IsRepeatingEvent == true);
+
+                bool checkForRepeatingEvents = ActiveCalendar.EventCollection.Any(e => e.IsRepeatingEvent == true);
+
+                if (currentRepeatingEvents == null)
+                {
+                    checkForRepeatingEvents = false;
                 }
 
                 ObservableCollection<RocketWeekModel> rocketWeeksCollection = new ObservableCollection<RocketWeekModel>();
@@ -439,7 +440,40 @@ namespace RocketCalendar.ViewModels.Pages
                         }
                         for (int k = dayCellsPaddedInFirstWeek; k < daysInWeek; k++)
                         {
-                            if(checkForEvents)
+                            if (checkForEvents || checkForRepeatingEvents)
+                            {
+                                ObservableCollection<RocketEvent> eList = new ObservableCollection<RocketEvent>();
+                                if (checkForEvents)
+                                {
+                                    foreach (var rEvent in currentEvents)
+                                    {
+                                        if (daysGeneratedCount + 1 == rEvent.EventDate.DateDay && !rEvent.IsRepeatingEvent)
+                                        {
+                                            eList.Add(rEvent);
+                                        }
+                                    }
+                                }
+                                if (checkForRepeatingEvents)
+                                {
+                                    //Add repeating events to list
+                                    foreach (var repeatingEvent in currentRepeatingEvents)
+                                    {
+                                        if (daysGeneratedCount + 1 == repeatingEvent.EventDate.DateDay)
+                                        {
+                                            //Check if it applies
+                                            if (rdh.DoesRepeatingEventApplyToDate(ActiveCalendar, repeatingEvent, new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear)))
+                                            {
+                                                eList.Add(repeatingEvent);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                generatedWeek.Add(new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear, eList));
+                            }
+
+                            /*
+                             if (checkForEvents)
                             {
                                 ObservableCollection<RocketEvent> eList = new ObservableCollection<RocketEvent>();
                                 foreach (var rEvent in currentEvents)
@@ -451,6 +485,8 @@ namespace RocketCalendar.ViewModels.Pages
                                 }
                                 generatedWeek.Add(new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear, eList));
                             }
+                             */
+
                             else
                             {
                                 generatedWeek.Add(new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear));
@@ -464,16 +500,35 @@ namespace RocketCalendar.ViewModels.Pages
                         //generating the last week..
                         for (int l = daysGeneratedCount; l < daysInMonth; l++)
                         {
-                            if (checkForEvents)
+                            if (checkForEvents || checkForRepeatingEvents)
                             {
                                 ObservableCollection<RocketEvent> eList = new ObservableCollection<RocketEvent>();
-                                foreach (var rEvent in currentEvents)
+                                if (checkForEvents)
                                 {
-                                    if (daysGeneratedCount + 1 == rEvent.EventDate.DateDay)
+                                    foreach (var rEvent in currentEvents)
                                     {
-                                        eList.Add(rEvent);
+                                        if (daysGeneratedCount + 1 == rEvent.EventDate.DateDay && !rEvent.IsRepeatingEvent)
+                                        {
+                                            eList.Add(rEvent);
+                                        }
                                     }
                                 }
+                                if (checkForRepeatingEvents)
+                                {
+                                    //Add repeating events to list
+                                    foreach (var repeatingEvent in currentRepeatingEvents)
+                                    {
+                                        if(daysGeneratedCount + 1 == repeatingEvent.EventDate.DateDay)
+                                        {
+                                            //Check if it applies
+                                            if (rdh.DoesRepeatingEventApplyToDate(ActiveCalendar, repeatingEvent, new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear)))
+                                            {
+                                                eList.Add(repeatingEvent);
+                                            }
+                                        }
+                                    }
+                                }
+                                
                                 generatedWeek.Add(new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear, eList));
                             }
                             else
@@ -493,7 +548,40 @@ namespace RocketCalendar.ViewModels.Pages
                         //generating full weeks
                         for (int n = 0; n < daysInWeek; n++)
                         {
-                            if (checkForEvents)
+                            if (checkForEvents || checkForRepeatingEvents)
+                            {
+                                ObservableCollection<RocketEvent> eList = new ObservableCollection<RocketEvent>();
+                                if (checkForEvents)
+                                {
+                                    foreach (var rEvent in currentEvents)
+                                    {
+                                        if (daysGeneratedCount + 1 == rEvent.EventDate.DateDay && !rEvent.IsRepeatingEvent)
+                                        {
+                                            eList.Add(rEvent);
+                                        }
+                                    }
+                                }
+                                if (checkForRepeatingEvents)
+                                {
+                                    //Add repeating events to list
+                                    foreach (var repeatingEvent in currentRepeatingEvents)
+                                    {
+                                        if (daysGeneratedCount + 1 == repeatingEvent.EventDate.DateDay)
+                                        {
+                                            //Check if it applies
+                                            if (rdh.DoesRepeatingEventApplyToDate(ActiveCalendar, repeatingEvent, new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear)))
+                                            {
+                                                eList.Add(repeatingEvent);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                generatedWeek.Add(new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear, eList));
+                            }
+
+                            /*
+                             if (checkForEvents)
                             {
                                 ObservableCollection<RocketEvent> eList = new ObservableCollection<RocketEvent>();
                                 foreach (var rEvent in currentEvents)
@@ -505,6 +593,8 @@ namespace RocketCalendar.ViewModels.Pages
                                 }
                                 generatedWeek.Add(new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear, eList));
                             }
+                             */
+
                             else
                             {
                                 generatedWeek.Add(new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear));
@@ -530,12 +620,6 @@ namespace RocketCalendar.ViewModels.Pages
             {
                 var ce = ActiveCalendar.EventCollection.Where(e => e.EventDate.DateYear == ActiveCalendar.CurrentYear && e.EventDate.DateMonth == ActiveCalendar.CurrentMonth);
 
-                /*
-                foreach (var item in ce)
-                {
-                    CurrentEvents.Add(item);
-                }
-                */
                 foreach (var re in ce)
                 {
                     for (int i = 0; i < weeksCollection.Count; i++)
@@ -557,12 +641,6 @@ namespace RocketCalendar.ViewModels.Pages
 
         
 
-        
-
-        
-
-
-
         public void OnNavigatedTo()
         {
             if (!_isInitialized)
@@ -572,128 +650,7 @@ namespace RocketCalendar.ViewModels.Pages
             //SelectedRocketMonth = ActiveCalendar.MonthCollection[ActiveCalendar.CurrentMonth];
         }
 
-        /*
-        private void GenerateMyDataTable(ObservableCollection<RocketWeekModel> weeks, int numOfWeeksToPopulate)
-        {
-            DataTable dt = new DataTable();
-
-            //AddColumn<string>(dt, "type");
-            for (int i = 0; i < ActiveCalendar.DayNameCollection.Count; i++)
-            {
-                AddColumn<string>(dt, ActiveCalendar.DayNameCollection[i].ToString());
-            }
-
-            for(int j=0; j < numOfWeeksToPopulate; j++)
-            {
-                var columnValues = new List<object>();
-                for(int k=0; k < ActiveCalendar.DayNameCollection.Count; k++)
-                {
-                    columnValues.Add(weeks[j].RocketWeek[k]);
-                }
-
-                AddRow(dt, columnValues);
-            }
-            MyDataTable = dt;
-        }
-
-        private void AddColumn<TData>(DataTable dataTable, string columnName, int columnIndex = -1)
-        {
-            DataColumn newColumn = new DataColumn(columnName, typeof(TData));
-
-            dataTable.Columns.Add(newColumn);
-            if (columnIndex > -1)
-            {
-                newColumn.SetOrdinal(columnIndex);
-            }
-
-            int newColumnIndex = dataTable.Columns.IndexOf(newColumn);
-
-            // Initialize existing rows with default value for the new column
-            foreach (DataRow row in dataTable.Rows)
-            {
-                row[newColumnIndex] = default(TData);
-            }
-        }
-
-        private void AddRow(DataTable dataTable, IList<object> columnValues)
-        {
-            DataRow rowModelWithCurrentColumns = dataTable.NewRow();
-            dataTable.Rows.Add(rowModelWithCurrentColumns);
-
-            for (int columnIndex = 0; columnIndex < dataTable.Columns.Count; columnIndex++)
-            {
-                rowModelWithCurrentColumns[columnIndex] = columnValues[columnIndex];
-            }
-        }
-
-        */
-
-        /*
         
-        public void GenerateWeeksCollections()
-        {
-            Helpers.RocketDateHelper rdh = new Helpers.RocketDateHelper();
-
-            int daysInMonth = ActiveCalendar.MonthCollection[ActiveCalendar.CurrentMonth].NumOfDays;
-            int daysInWeek = ActiveCalendar.DayNameCollection.Count;
-            int firstDayWeekIndex = rdh.GetFirstDayNameIndexOfCurrentYear(ActiveCalendar, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear);
-
-            int numOfWeeksToPopulate = (int)Math.Ceiling((double)(daysInMonth - (daysInWeek - firstDayWeekIndex)) / (double)daysInWeek) + 1;
-
-            WeeksCollection.Clear();
-            ObservableCollection<RocketDate> generatedWeek = new ObservableCollection<RocketDate>();
-
-            int dayCellsPaddedInFirstWeek = 0;
-            int daysGeneratedCount = 0;
-            int daysInLastWeekGenerated = 0;
-
-            for (int i = 0; i < numOfWeeksToPopulate; i++)
-            {
-                generatedWeek.Clear();
-
-                if(i == 0)
-                {
-                    //generate first week
-                    for (int j = 0; j < firstDayWeekIndex; j++)
-                    {
-                        generatedWeek.Add(new RocketDate(true));
-                        dayCellsPaddedInFirstWeek++;
-                    }
-                    for (int k = dayCellsPaddedInFirstWeek; k < daysInWeek; k++)
-                    {
-                        generatedWeek.Add(new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear));
-                        daysGeneratedCount++;
-                    }
-                }
-                else if(i == numOfWeeksToPopulate - 1)
-                {
-                    //generating the last week..
-                    for (int l = daysGeneratedCount;  l < daysInMonth; l++)
-                    {
-                        generatedWeek.Add(new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear));
-                        daysGeneratedCount++;
-                        daysInLastWeekGenerated++;
-                    }
-                    for (int m = daysInLastWeekGenerated; m < daysInWeek; m++)
-                    {
-                        generatedWeek.Add(new RocketDate(true));
-                    }
-                }
-                else
-                {
-                    //generating full weeks
-                    for (int n = 0; n < daysInWeek; n++)
-                    {
-                        generatedWeek.Add(new RocketDate(daysGeneratedCount + 1, ActiveCalendar.CurrentMonth, ActiveCalendar.CurrentYear));
-                        daysGeneratedCount++;
-                    }
-                }
-
-                WeeksCollection.Add(new RocketWeekModel(generatedWeek));
-            }
-        }
-
-        */
 
         public void OnNavigatedFrom() 
         {
