@@ -121,7 +121,6 @@ namespace RocketCalendar.ViewModels.Pages
         }
 
         
-
         [RelayCommand]
         private void ExportEventListToExcel()
         {
@@ -148,9 +147,10 @@ namespace RocketCalendar.ViewModels.Pages
                     return;
                 }
 
+
                 if (IncludePrivateEvents)
                 {
-                    string res = io.SaveEventList_Excel(_appData.ActiveRocketCalendar.EventCollection, saveFileDialog.FileName);
+                    io.SaveEventList_Excel(_appData.ActiveRocketCalendar.EventCollection, saveFileDialog.FileName);
                 }
                 else
                 {
@@ -160,7 +160,7 @@ namespace RocketCalendar.ViewModels.Pages
                     {
                         publicEventsCollection.Add(item);
                     }
-                    string res = io.SaveEventList_Excel(publicEventsCollection, saveFileDialog.FileName);
+                    io.SaveEventList_Excel(publicEventsCollection, saveFileDialog.FileName);
                 }
 
                 ShowSuccessSnackbar("Your event list was saved to an Excel file");
@@ -196,16 +196,54 @@ namespace RocketCalendar.ViewModels.Pages
                     return;
                 }
 
-                //RocketCalendarFileName = openFileDialog.FileName;
+                var newEventList = io.LoadEventList_Excel2(openFileDialog.FileName);
 
-                //Load Calendar from Filename here
+                if (newEventList != null)
+                {
+                    var uiMessageBox = new Wpf.Ui.Controls.MessageBox
+                    {
+                        Title = "Event List Changes",
+                        Content = "Do you want to the loaded event list to be added to or overwrite your current event list?",
+                        PrimaryButtonText = "Add",
+                        PrimaryButtonAppearance = Wpf.Ui.Controls.ControlAppearance.Primary,
+                        SecondaryButtonText = "Overwrite",
+                        SecondaryButtonAppearance = Wpf.Ui.Controls.ControlAppearance.Danger
+                    };
+
+                    var result = uiMessageBox.ShowDialogAsync();
+
+                    
+                     if (result.Result.ToString() == "Primary")
+                    {
+                        foreach (RocketEvent e in newEventList)
+                        {
+                            _appData.ActiveRocketCalendar.EventCollection.Add(e);
+                        }
+                        ShowSuccessSnackbar("Your event list was imported from a Xml file");
+                    }
+                    else if (result.Result.ToString() == "Secondary")
+                    {
+                        _appData.ActiveRocketCalendar.EventCollection.Clear();
+                        foreach (RocketEvent e in newEventList)
+                        {
+                            _appData.ActiveRocketCalendar.EventCollection.Add(e);
+                        }
+                        ShowSuccessSnackbar("Your event list was imported from a Xml file");
+                    }
+                     
+
+                }
+                else
+                {
+                    ShowErrorSnackbar("The application failed to import your event list from an Excel file. Verify you are selecting the correct file.");
+                }
 
 
-                ShowSuccessSnackbar("Your calendar was imported from a Xaml file");
+                ShowSuccessSnackbar("Your event list was imported from an Excel file");
             }
             catch
             {
-                ShowErrorSnackbar("The application failed to import your calendar from a Xaml file");
+                ShowErrorSnackbar("The application failed to import your event list from an Excel file");
             }
         }
 
@@ -424,14 +462,5 @@ namespace RocketCalendar.ViewModels.Pages
         }
 
 
-        private void SaveEventListToExcel(string fileName)
-        {
-
-        }
-
-        private void SaveEventListToXml(string fileName)
-        {
-
-        }
     }
 }

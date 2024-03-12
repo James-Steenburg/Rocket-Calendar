@@ -44,21 +44,15 @@ using RocketCalendar.Helpers;
 
 
 TO DO:
-    1. Implement File IO functionality
+    1. refresh ActiveCalendar OnNavigatedTo. I.E. calendar page doesn't update calendar name when a new calendar is imported
     2. Setup statusbar to show only when tasks are running
     3. Implement Font
     4. Create CommonApplicationData folder on startup if it doesn't exist?
-    5. refresh ActiveCalendar OnNavigatedTo. I.E. calendar page doesn't update calendar name when a new calendar is imported
 
 
     Move Day and Calendar controls to custom controls: https://www.youtube.com/watch?v=t8zB_SYGOF0
     Add Fonts: Montserrat or AzeretMono-thin(DRS)?
-    Event Repeat property?
     Make a Create Excel Event List Template and Excel Event List Import
-
-    Maybe?
-    Change Navigation items to different calendars, settings and create calendar
-        Create Event will be moved to an external window.
 
 Unused Content to check:
     1. Dialog Content Resources for CreateCalendarPage

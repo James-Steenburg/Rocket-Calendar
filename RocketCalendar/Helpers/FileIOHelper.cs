@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Office.Interop.Excel;
+﻿using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic.Logging;
+using OfficeOpenXml;
 using RocketCalendar.Models;
 using System;
 using System.Collections.Generic;
@@ -8,121 +9,165 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using static Microsoft.IO.RecyclableMemoryStreamManager;
 
 namespace RocketCalendar.Helpers
 {
     public class FileIOHelper
     {
-        Application xlApp;
-
-        public string SaveEventList_Excel(ObservableCollection<RocketEvent> events, string filePath)
+        public async Task SaveEventList_Excel(ObservableCollection<RocketEvent> events, string filePath)
         {
-            xlApp = new Application();
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            var file = new FileInfo(filePath);
 
-            if (xlApp == null)
-            {
-                //Excel is not properly installed.
-                return null;
-            }
+            await SaveExcelFile(events, file);
 
-            try
-            {
-                Workbook xlWorkBook;
-                Worksheet xlWorkSheet;
-                object misValue = System.Reflection.Missing.Value;
-
-                xlWorkBook = xlApp.Workbooks.Add(misValue);
-                xlWorkSheet = (Microsoft.Office.Interop.Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
-
-                Microsoft.Office.Interop.Excel.Range headerRange = xlWorkSheet.get_Range("A1", "A9");
-                string[] headerData = ["Event Name", "Event Day", "Event Month", "Event Year", "IsPrivate","Color Index","Month Repeat Interval","Year Repeat Interval","Event Description"];
-                headerRange.Value = headerData;
-
-                Microsoft.Office.Interop.Excel.Range eventRange;
-                string[] eventData;
-                int rowIndex = 2;
-                foreach (RocketEvent e in events)
-                {
-                    eventRange = xlWorkSheet.get_Range(xlWorkSheet.Cells[rowIndex, 1], xlWorkSheet.Cells[rowIndex, 9]);
-                    eventData = [
-                        e.EventName,
-                        e.EventDate.DateDay.ToString(),
-                        e.EventDate.DateMonth.ToString(),
-                        e.EventDate.DateYear.ToString(),
-                        e.IsPrivate.ToString(),
-                        e.ColorIndex.ToString(),
-                        e.MonthRepeatInterval.ToString(),
-                        e.YearRepeatInterval.ToString(),
-                        e.EventDescription
-                        ];
-
-                    eventRange.Value = eventData;
-                    rowIndex++;
-                }
-
-                xlWorkBook.SaveAs(filePath, Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbook, misValue,
-                misValue, misValue, misValue, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
-
-
-                xlWorkBook.Close(true, misValue, misValue);
-                xlApp.Quit();
-
-                Marshal.ReleaseComObject(xlWorkSheet);
-                Marshal.ReleaseComObject(xlWorkBook);
-                Marshal.ReleaseComObject(xlApp);
-
-                //if (sheet.Cells[4,3] == null || sheet.Cells[4,3].Value2 == null || sheet.Cells[4,3].Value2.ToString() == "")
-                //MessageBox.Show(“cell on row 4 col 3 is empty”);
-            }
-            catch
-            {
-
-            }
-
-            return "";
         }
 
-        public ObservableCollection<RocketEvent> LoadEventList_Excel(string filePath)
+        private async Task SaveExcelFile(ObservableCollection<RocketEvent> events, FileInfo file)
         {
-            xlApp = new Application();
+            DeleteIfExists(file);
 
-            if(xlApp == null)
-            {
-                //Excel is not properly installed.
-                return null;
-            }
+            using var package = new ExcelPackage(file);
+            var xlWorksheet = package.Workbook.Worksheets.Add("Rocket Events List");
+            var range = xlWorksheet.Cells["A1"].LoadFromCollection(events, true, OfficeOpenXml.Table.TableStyles.Medium1);
 
-            try
-            {
-                Workbook workBook = xlApp.Workbooks.Open(filePath,
-            Type.Missing, Type.Missing, Type.Missing, Type.Missing,
-            Type.Missing, Type.Missing, Type.Missing, Type.Missing,
-            Type.Missing, Type.Missing, Type.Missing, Type.Missing,
-            Type.Missing, Type.Missing);
-
-                //work
-
-                workBook.Close(false, filePath, null);
-                Marshal.ReleaseComObject(workBook);
-            }
-            catch
-            {
-
-            }
-
+            var max = xlWorksheet.Column(1).ColumnMax;
             
+            range.AutoFitColumns();
 
+            await package.SaveAsync();
+        }
 
+        private static void DeleteIfExists(FileInfo file)
+        {
+            if(file.Exists)
+            {
+                file.Delete();
+            }
+        }
 
-
+        public ObservableCollection<RocketEvent> LoadEventList_Excel2(string filePath)
+        {
             ObservableCollection<RocketEvent> events = new ObservableCollection<RocketEvent>();
 
+            var file = new FileInfo(filePath);
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
+
+                int row = 2;
+                int col = 1;
+
+                while (string.IsNullOrWhiteSpace(worksheet.Cells[row, col].Value?.ToString()) == false)
+                {
+                    RocketEvent e = new RocketEvent(new RocketDate(1, 1, 1), "", "", false, 1);
+
+                    e.EventName = worksheet.Cells[row, col].Value.ToString();
+                    e.EventDescription = worksheet.Cells[row, col + 2].Value.ToString();
+                    e.IsPrivate = bool.Parse(worksheet.Cells[row, col + 3].Value.ToString());
+                    e.ColorIndex = int.Parse(worksheet.Cells[row, col + 4].Value.ToString());
+                    e.MonthRepeatInterval = int.Parse(worksheet.Cells[row, col + 5].Value.ToString());
+                    e.YearRepeatInterval = int.Parse(worksheet.Cells[row, col + 6].Value.ToString());
+                    e.EventDate.DateDay = int.Parse(worksheet.Cells[row, col + 7].Value.ToString());
+                    e.EventDate.DateMonth = int.Parse(worksheet.Cells[row, col + 8].Value.ToString());
+                    e.EventDate.DateYear = int.Parse(worksheet.Cells[row, col + 9].Value.ToString());
+                    events.Add(e);
+                    row++;
+                }
+
+
+                /*
+                 using (var package = new ExcelPackage(file))
+            {
+                var xlWorkbook = package.Workbook;
+                var xlWorksheet = xlWorkbook.Worksheets.First();
+                //ignoring headers
+                int row = 2;
+                int col = 1;
+
+                while (string.IsNullOrWhiteSpace(xlWorksheet.Cells[row, col].Value?.ToString()) == false)
+                {
+                    RocketEvent e = new RocketEvent(new RocketDate(1, 1, 1), "", "", false, 1);
+
+                    e.EventName = xlWorksheet.Cells[row, col].Value.ToString();
+                    e.EventDescription = xlWorksheet.Cells[row, col + 2].Value.ToString();
+                    e.IsPrivate = bool.Parse(xlWorksheet.Cells[row, col + 3].Value.ToString());
+                    e.ColorIndex = int.Parse(xlWorksheet.Cells[row, col + 4].Value.ToString());
+                    e.MonthRepeatInterval = int.Parse(xlWorksheet.Cells[row, col + 5].Value.ToString());
+                    e.YearRepeatInterval = int.Parse(xlWorksheet.Cells[row, col + 6].Value.ToString());
+                    e.EventDate.DateDay = int.Parse(xlWorksheet.Cells[row, col + 7].Value.ToString());
+                    e.EventDate.DateMonth = int.Parse(xlWorksheet.Cells[row, col + 8].Value.ToString());
+                    e.EventDate.DateYear = int.Parse(xlWorksheet.Cells[row, col + 9].Value.ToString());
+                    events.Add(e);
+                    row++;
+                }
+                
+            }
+                 
+                 */
+            }
+
+            return events;
+        }
+
+        public async Task<ObservableCollection<RocketEvent>> LoadEventList_Excel(string filePath)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            var file = new FileInfo(filePath);
+
+            ObservableCollection<RocketEvent> events = new ObservableCollection<RocketEvent>();
+            List<RocketEvent> eventsFromExcel = await LoadFromExcelFile(file);
+
+            foreach (RocketEvent e in eventsFromExcel)
+            {
+                events.Add(e);
+            }
+
+            return events;
+        }
+
+        private static async Task<List<RocketEvent>> LoadFromExcelFile(FileInfo file)
+        {
+            List<RocketEvent> events = new();
+
+
+            using var package = new ExcelPackage(file);
+
+            //issue here
+            await package.LoadAsync(file);
+
+            var xlWorksheet = package.Workbook.Worksheets[0];
+
+            //ignoring headers
+            int row = 2; 
+            int col = 1;
+
+            while (string.IsNullOrWhiteSpace(xlWorksheet.Cells[row,col].Value?.ToString()) == false)
+            {
+                RocketEvent e = new RocketEvent(new RocketDate(1, 1, 1), "", "", false, 1);
+
+                e.EventName = xlWorksheet.Cells[row, col].Value.ToString();
+                e.EventDescription = xlWorksheet.Cells[row, col + 2].Value.ToString();
+                e.IsPrivate = bool.Parse(xlWorksheet.Cells[row, col + 3].Value.ToString());
+                e.ColorIndex = int.Parse(xlWorksheet.Cells[row, col + 4].Value.ToString());
+                e.MonthRepeatInterval = int.Parse(xlWorksheet.Cells[row, col + 5].Value.ToString());
+                e.YearRepeatInterval = int.Parse(xlWorksheet.Cells[row, col + 6].Value.ToString());
+                e.EventDate.DateDay = int.Parse(xlWorksheet.Cells[row, col + 7].Value.ToString());
+                e.EventDate.DateMonth = int.Parse(xlWorksheet.Cells[row, col + 8].Value.ToString());
+                e.EventDate.DateYear = int.Parse(xlWorksheet.Cells[row, col + 9].Value.ToString());
+                events.Add(e);
+                row++;
+            }
             return events;
         }
 
