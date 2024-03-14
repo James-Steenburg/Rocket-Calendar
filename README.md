@@ -4,9 +4,11 @@ Rocket Calendar is a hobby project created in C# using WPF UI, MVVM architecture
 
 ## Features
 
-- **Customizable Calendars:** Design calendars to mirror the unique rhythms of fictional worlds, adjusting parameters such as day and month lengths, and celestial events alignment.
+- **Customizable Calendars:** Design calendars to mirror the unique rhythms of fictional worlds, adjusting parameters such as day and month lengths.
   
 - **Event Tracking:** Seamlessly integrated event tracking allows dungeon masters and players to meticulously plan and chronicle their adventures, ensuring no detail is lost in the storytelling.
+
+- **Data Accessibility:** Export your events list to either an Excel or XML file format and select whether to include private events that are not yet ready to be shared.
 
 ## Getting Started
 
