@@ -13,12 +13,17 @@ using System.Xml.Linq;
 using Wpf.Ui.Controls;
 using Wpf.Ui;
 using Wpf.Ui.Extensions;
+using System.IO;
 
 namespace RocketCalendar.ViewModels.Pages
 {
-    public partial class CreateCalendarViewModel(IContentDialogService contentDialogService) : ObservableObject
+    public partial class CreateCalendarViewModel : ObservableObject
     {
         private bool _isInitialized = false;
+        private GlobalAppData _appData;
+        private IContentDialogService _contentDialogService;
+        private ISnackbarService _snackbarService;
+        RocketCalendar.Helpers.FileIOHelper io = new RocketCalendar.Helpers.FileIOHelper();
 
         [ObservableProperty]
         private bool _isFlyoutOpen = false;
@@ -120,8 +125,53 @@ namespace RocketCalendar.ViewModels.Pages
         [RelayCommand]
         private async Task CreateCalendar(object content)
         {
+            try
+            {
+                ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(
+                new SimpleContentDialogCreateOptions()
+                {
+                    Title = "Creating Calendar",
+                    Content = "Are you sure you want to save this calendar over the current calendar?",
+                    PrimaryButtonText = "Save",
+                    CloseButtonText = "Cancel",
 
-            //not needed?
+                }
+                );
+
+                string resultText = result switch
+                {
+                    ContentDialogResult.Primary => "Calendar Saved",
+                    ContentDialogResult.Secondary => "User did not save their work",
+                    _ => "User cancelled the dialog"
+                };
+
+                if (resultText == "Calendar Saved")
+                {
+                    ObservableCollection<RocketEvent> events = new ObservableCollection<RocketEvent>();
+
+                    _appData.ActiveRocketCalendar = new RocketCalendarModel(
+                        NewCalendarName,
+                        new RocketDate(BaseDateIndexInput, BaseDayInput, BaseMonthIndexInput, BaseYearInput),
+                        MonthListViewItems,
+                        DayNameListViewItems,
+                        events,
+                        BaseMonthIndexInput,
+                        BaseYearInput
+                        );
+
+                    SaveCalendarToFile();
+                    ShowSuccessSnackbar("Your new calendar has been loaded.");
+                }
+            }
+            catch
+            {
+                ShowSuccessSnackbar("A new calendar was not created.");
+            }
+
+            
+
+            /*
+             //not needed?
             if(MonthListViewItems.Count > 0 && DayNameListViewItems.Count > 0 && NewCalendarName.Length > 0)
             {
                 MonthListBoxItems = MonthListViewItems;
@@ -153,7 +203,38 @@ namespace RocketCalendar.ViewModels.Pages
                     IsFlyoutOpen = true;
             }
 
+             */
 
+        }
+
+        private ControlAppearance _snackbarAppearance = ControlAppearance.Secondary;
+
+        private int _snackbarAppearanceComboBoxSelectedIndex = 1;
+
+        public int SnackbarAppearanceComboBoxSelectedIndex
+        {
+            get => _snackbarAppearanceComboBoxSelectedIndex;
+            set
+            {
+                SetProperty<int>(ref _snackbarAppearanceComboBoxSelectedIndex, value);
+                UpdateSnackbarAppearance(value);
+            }
+        }
+
+        private void UpdateSnackbarAppearance(int appearanceIndex)
+        {
+            _snackbarAppearance = appearanceIndex switch
+            {
+                1 => ControlAppearance.Secondary,
+                2 => ControlAppearance.Info,
+                3 => ControlAppearance.Success,
+                4 => ControlAppearance.Caution,
+                5 => ControlAppearance.Danger,
+                6 => ControlAppearance.Light,
+                7 => ControlAppearance.Dark,
+                8 => ControlAppearance.Transparent,
+                _ => ControlAppearance.Primary
+            };
         }
 
         [RelayCommand]
@@ -209,7 +290,10 @@ namespace RocketCalendar.ViewModels.Pages
                 InitializeViewModel();
         }
 
-        public void OnNavigatedFrom() { }
+        public void OnNavigatedFrom() 
+        {
+
+        }
 
         private void InitializeViewModel()
         {
@@ -219,5 +303,72 @@ namespace RocketCalendar.ViewModels.Pages
             _isInitialized = true;
         }
 
+
+        public CreateCalendarViewModel(GlobalAppData appData, IContentDialogService contentDialogService, ISnackbarService snackbarService)
+        {
+            _appData = appData;
+            _contentDialogService = contentDialogService;
+            _snackbarService = snackbarService;
+        }
+
+        private void ShowErrorSnackbar(string message)
+        {
+            SnackbarAppearanceComboBoxSelectedIndex = 5;
+            _snackbarService.Show(
+            "Error:",
+            message,
+            _snackbarAppearance,
+            new SymbolIcon(SymbolRegular.ErrorCircle24),
+            TimeSpan.FromSeconds(3)
+            );
+        }
+
+        private void ShowSuccessSnackbar(string message)
+        {
+            SnackbarAppearanceComboBoxSelectedIndex = 3;
+            _snackbarService.Show(
+            "Success!",
+            message,
+            _snackbarAppearance,
+            new SymbolIcon(SymbolRegular.CheckmarkCircle24),
+            TimeSpan.FromSeconds(3)
+            );
+        }
+
+        private void SaveCalendarToFile()
+        {
+            try
+            {
+                //Export Calendar to Xaml here..
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string appDataFolder = Path.Combine(localAppData, "RocketCalendar");
+
+                if (!Directory.Exists(appDataFolder))
+                {
+                    Directory.CreateDirectory(appDataFolder);
+                }
+
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog()
+                {
+                    FileName = _appData.ActiveRocketCalendar.CalendarName,
+                    InitialDirectory = appDataFolder,
+                    Filter = "Rocket xml files (*.xml)|*.xml"
+                };
+
+                if (saveFileDialog.ShowDialog() != true)
+                {
+                    return;
+                }
+
+                //save to SaveFileDialog.FileName here
+                io.SaveCalendar_XML(_appData.ActiveRocketCalendar, saveFileDialog.FileName);
+
+                ShowSuccessSnackbar("Your calendar was saved to a Xml file");
+            }
+            catch
+            {
+                ShowErrorSnackbar("The application failed to save your calendar to a Xml file");
+            }
+        }
     }
 }

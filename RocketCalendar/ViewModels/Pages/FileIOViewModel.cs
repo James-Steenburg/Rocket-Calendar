@@ -447,6 +447,8 @@ namespace RocketCalendar.ViewModels.Pages
                     if (result.Result.ToString() == "Primary")
                     {
                         _appData.ActiveRocketCalendar = newCalendar;
+                        Properties.Settings.Default.DefaultCalendarFilePath = openFileDialog.FileName;
+                        Properties.Settings.Default.Save();
                         ShowSuccessSnackbar("Your event list was imported from a Xml file");
                     }
                 }

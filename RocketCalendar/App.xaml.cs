@@ -58,7 +58,6 @@ namespace RocketCalendar
                     services.AddSingleton<ViewModels.RocketCalendarViewModel>();
 
                     services.AddSingleton<Views.AddOrEditEventWindow>();
-                    services.AddSingleton<ViewModels.AddOrEditEventViewModel>();
 
                     // Global App Data
                     services.AddSingleton<GlobalAppData>();

@@ -9,10 +9,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controls\**" />
+    <EmbeddedResource Remove="Controls\**" />
+    <None Remove="Controls\**" />
+    <Page Remove="Controls\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ViewModels\AddOrEditEventViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Assets\AbstractBackground.jpeg" />
-    <None Remove="Assets\AbstractBackground_alt.jpeg" />
-    <None Remove="Assets\pexels-johannes-plenio-1103970.jpg" />
-    <None Remove="Assets\wpfui.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,9 +34,6 @@
 
   <ItemGroup>
     <Resource Include="Assets\AbstractBackground.jpeg" />
-    <Resource Include="Assets\AbstractBackground_alt.jpeg" />
-    <Resource Include="Assets\pexels-johannes-plenio-1103970.jpg" />
-    <Resource Include="Assets\wpfui.png" />
   </ItemGroup>
 
   <ItemGroup>

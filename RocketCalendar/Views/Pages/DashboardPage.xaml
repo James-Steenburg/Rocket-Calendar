@@ -16,54 +16,64 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="5*" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Border CornerRadius="4">
+        <Border.Background>
+            <ImageBrush ImageSource="pack://application:,,,/Assets/AbstractBackground.jpeg" />
+        </Border.Background>
 
-        <ui:Image
-            Grid.Row="0"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Width="800"
-            Margin="10"
-            HorizontalAlignment="Center"
-            BorderBrush="#33000000"
-            BorderThickness="2"
-            CornerRadius="4"
-            Source="pack://application:,,,/Assets/AbstractBackground.jpeg" />
+        <Grid>
+            <Border Background="DarkSlateBlue" Opacity="0.10" />
 
 
-        <Grid
-            Grid.Row="1"
-            Margin="20"
-            VerticalAlignment="Top">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4*" />
+                    <RowDefinition Height="2*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <ui:Button
-                Grid.Column="0"
-                Command="{Binding ViewModel.CounterIncrementCommand, Mode=OneWay}"
-                Content="Click me!"
-                Icon="{ui:SymbolIcon Fluent24}" />
-            <TextBlock
-                Grid.Column="1"
-                Margin="12,0,0,0"
-                VerticalAlignment="Center"
-                Text="{Binding ViewModel.Counter, Mode=OneWay}" />
+                <StackPanel
+                    Grid.Row="0"
+                    Margin="40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Orientation="Vertical">
+                    <TextBlock
+                        Margin="0,0,0,5"
+                        FontSize="44"
+                        Foreground="White"
+                        Text="Rocket Calendar" />
+                    <TextBlock
+                        Foreground="White"
+                        Text="Craft intricate realms and track epic adventures with Rocket Calendar, your digital tool for fantasy world-building and custom event tracking."
+                        TextWrapping="Wrap" />
+                </StackPanel>
 
-            <ui:Button
-                Grid.Column="1"
-                Margin="10,0,10,0"
-                Command="{Binding ViewModel.ShowAddOrEditEventDialogCommand, Mode=OneWay}"
-                Content="Dialog btn"
-                Icon="{ui:SymbolIcon Fluent24}" />
+
+                <StackPanel
+                    Grid.Row="1"
+                    Margin="20"
+                    Orientation="Horizontal">
+                    <ui:Button
+                        Margin="10"
+                        Appearance="Primary"
+                        Command="{Binding ViewModel.LoadACalendarButtonCommand}"
+                        Content="Load a Calendar" />
+                    <ui:Button
+                        Margin="10"
+                        Command="{Binding ViewModel.CreateACalendarButtonCommand}"
+                        Content="Create a Calendar" />
+
+                </StackPanel>
+            </Grid>
+
         </Grid>
 
-    </Grid>
+
+    </Border>
 
 
 

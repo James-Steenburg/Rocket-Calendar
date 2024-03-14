@@ -25,13 +25,13 @@ namespace RocketCalendar.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Not Set")]
-        public string CalendarPathConcatenatedList {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DefaultCalendarFilePath {
             get {
-                return ((string)(this["CalendarPathConcatenatedList"]));
+                return ((string)(this["DefaultCalendarFilePath"]));
             }
             set {
-                this["CalendarPathConcatenatedList"] = value;
+                this["DefaultCalendarFilePath"] = value;
             }
         }
     }

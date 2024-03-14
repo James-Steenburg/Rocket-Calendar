@@ -10,44 +10,16 @@ using Wpf.Ui;
 using System.Windows.Forms.PropertyGridInternal;
 using RocketCalendar.Models;
 using RocketCalendar.Helpers;
+using System.Windows;
 
 
 /*
- Notes:
-    Views: 
-        Home
-        Calendar 1
-            Setting options to delete, duplicate
-            Right Click Calendar Date to create event
-            Select Event to open a ui.simpleContentDialog
-                btn 1 > edit event
-                btn 2 > delete event? Remove and add delete option to edit portion?
-                btn 3 > close
-        Calendar 2
-        Calendar n
-        Create Calendar
-        Create Event
-        
-        File IO >>> or should this be under calendar options and not a view? Both? Need an import and base file path folder setting?
-            XML 
-            Excel
-            Txt
-        Settings
-
-    Saving Calendar Paths
-        Concatenated List saved in variable: 
-            Properties.Settings.Default.CalendarPathConcatenatedList = "";
-                Delimiter with {Path.PathSeparator} aka ";" 
-                    Ex: Console.WriteLine($"Path.PathSeparator: '{Path.PathSeparator}'");
-
-
+ 
 
 
 TO DO:
-    1. refresh ActiveCalendar OnNavigatedTo. I.E. calendar page doesn't update calendar name when a new calendar is imported
-    2. Setup statusbar to show only when tasks are running
-    3. Implement Font
-    4. Create CommonApplicationData folder on startup if it doesn't exist?
+    1. Setup statusbar to show only when tasks are running
+    3. Clean up
 
 
     Move Day and Calendar controls to custom controls: https://www.youtube.com/watch?v=t8zB_SYGOF0
@@ -56,8 +28,6 @@ TO DO:
 
 Unused Content to check:
     1. Dialog Content Resources for CreateCalendarPage
-    2. AddOrEdit VM
-    3. Controls Folder
 
 Version 2:
     1. Multiday events
@@ -71,6 +41,7 @@ namespace RocketCalendar.ViewModels
     {
         private bool _isInitialized = false;
         private GlobalAppData _appData;
+        RocketCalendar.Helpers.FileIOHelper io = new RocketCalendar.Helpers.FileIOHelper();
 
         [ObservableProperty]
         private string _applicationTitle = String.Empty;
@@ -89,12 +60,13 @@ namespace RocketCalendar.ViewModels
 
         public RocketCalendarViewModel(INavigationService navigationService, GlobalAppData appData)
         {
-            IsStatusBarVisible = true;
+            IsStatusBarVisible = false;
+
+            _appData = appData;
 
             if (!_isInitialized)
                 InitializeViewModel();
 
-            _appData = appData;
 
             if(_appData.IS_DEBUG_MODE)
             {
@@ -180,6 +152,27 @@ namespace RocketCalendar.ViewModels
         {
             ApplicationTitle = "Rocket | Calendar";
 
+            try
+            {
+                RocketCalendarModel newCalendar = io.LoadCalendar_XML(Properties.Settings.Default.DefaultCalendarFilePath);
+                if (newCalendar == null)
+                {
+                    GeneratePlaceHolderCalendar();
+                }
+                _appData.ActiveRocketCalendar = newCalendar;
+            }
+            catch
+            {
+                GeneratePlaceHolderCalendar();
+            }
+
+
+            Visibility ActiveCalendarVisibility = Visibility.Visible;
+            if (_appData.ActiveRocketCalendar == null)
+            {
+                ActiveCalendarVisibility = Visibility.Collapsed;
+            }
+
             NavigationItems = new ObservableCollection<object>
         {
             new NavigationViewItem()
@@ -193,13 +186,15 @@ namespace RocketCalendar.ViewModels
                 Content = "Calendar",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.CalendarLtr24 },
                 TargetPageType = typeof(Views.Pages.CalendarPage),
-                ToolTip = "Calendar Name"
+                ToolTip = _appData.ActiveRocketCalendar.CalendarName,
+                Visibility = ActiveCalendarVisibility
             },
             new NavigationViewItem()
             {
                 Content = "Create Event",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.CalendarToday24 },
-                TargetPageType = typeof(Views.Pages.CreateEventPage)
+                TargetPageType = typeof(Views.Pages.CreateEventPage),
+                Visibility = ActiveCalendarVisibility
             },
             new NavigationViewItem()
             {
@@ -231,6 +226,51 @@ namespace RocketCalendar.ViewModels
         };
 
             _isInitialized = true;
+        }
+
+        private void GeneratePlaceHolderCalendar()
+        {
+            _appData.ActiveRocketCalendar = new RocketCalendarModel(
+                    "Example Gregorian Calendar",
+                    new RocketDate(6, 2, 2, 2024),
+                    new ObservableCollection<RocketMonth>()
+                    {
+                        new RocketMonth("January", 31),
+                        new RocketMonth("February", 28, 4),
+                        new RocketMonth("March", 31),
+                        new RocketMonth("April", 30),
+                        new RocketMonth("May", 31),
+                        new RocketMonth("June", 30),
+                        new RocketMonth("July", 31),
+                        new RocketMonth("August", 31),
+                        new RocketMonth("September", 30),
+                        new RocketMonth("October", 31),
+                        new RocketMonth("November", 30),
+                        new RocketMonth("December", 31)
+                    },
+                    new ObservableCollection<string>()
+                    {
+                        "Sunday",
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday",
+                        "Saturday"
+                    },
+                    new ObservableCollection<RocketEvent>()
+                    {
+                        new RocketEvent(new RocketDate(1,1,1),"bday","it was my bday",false,2),
+                        new RocketEvent(new RocketDate(3,2,2024),"Today","Just playing God of War",false,2),
+                        new RocketEvent(new RocketDate(3,2,2024),"Jessie","Just playing God of War",false,8),
+                        new RocketEvent(new RocketDate(3,2,2024),"Played","Just playing God of War",false,9),
+                        new RocketEvent(new RocketDate(3,2,2024),"Kratos","Just playing God of War",true,10),
+                        new RocketEvent(new RocketDate(5,6,2024),"Bday","wow 30",true,10,0,1),
+                        new RocketEvent(new RocketDate(2,1,2024),"Every6months","wow 6",true,10,6,0)
+                    },
+                    2,
+                    2024
+                    );
         }
     }
 }
