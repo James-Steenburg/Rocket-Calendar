@@ -11,6 +11,7 @@ using System.Windows.Forms.PropertyGridInternal;
 using RocketCalendar.Models;
 using RocketCalendar.Helpers;
 using System.Windows;
+using RocketCalendar.Properties;
 
 
 /*
@@ -179,6 +180,7 @@ namespace RocketCalendar.ViewModels
             {
                 Content = "Home",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
+                ToolTip = "Home",
                 TargetPageType = typeof(Views.Pages.DashboardPage)
             },
             new NavigationViewItem()
@@ -194,18 +196,21 @@ namespace RocketCalendar.ViewModels
                 Content = "Create Event",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.CalendarToday24 },
                 TargetPageType = typeof(Views.Pages.CreateEventPage),
+                ToolTip = "Create a New Event",
                 Visibility = ActiveCalendarVisibility
             },
             new NavigationViewItem()
             {
                 Content = "Create Calendar",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.CalendarAdd24 },
+                ToolTip = "Create a New Calendar",
                 TargetPageType = typeof(Views.Pages.CreateCalendarPage)
             },
             new NavigationViewItem()
             {
                 Content = "File IO",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.StreamInputOutput20 },
+                ToolTip = "File IO",
                 TargetPageType = typeof(Views.Pages.FileIOPage)
             }
         };
@@ -216,6 +221,7 @@ namespace RocketCalendar.ViewModels
             {
                 Content = "Settings",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24 },
+                ToolTip = "Settings",
                 TargetPageType = typeof(Views.Pages.SettingsPage)
             }
         };
