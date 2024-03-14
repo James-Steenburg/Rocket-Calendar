@@ -1,6 +1,6 @@
 # Rocket Calendar
 
-Rocket Calendar is a hobby project created in C# using WPF, MVVM architecture, and .NET 8. It serves as a versatile desktop application tailored for fantasy world-building enthusiasts, particularly beneficial for Dungeons and Dragons campaigns and similar realms of imagination.
+Rocket Calendar is a hobby project created in C# using WPF UI, MVVM architecture, and .NET 8. It serves as a versatile desktop application tailored for fantasy world-building enthusiasts, particularly beneficial for Dungeons and Dragons campaigns and similar realms of imagination.
 
 ## Features
 
