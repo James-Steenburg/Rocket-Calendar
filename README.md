@@ -1,5 +1,6 @@
 
-<img src="https://github.com/James-Steenburg/Rocket-Calendar/blob/master/RocketCalendar/Assets/RC-PNG-T.png" width="250" height="250">
+<img src="https://github.com/James-Steenburg/Rocket-Calendar/blob/master/RocketCalendar/Assets/RC-PNG-T.png" width="200" height="200">
+
 # Rocket Calendar
 
 Rocket Calendar is a hobby project created in C# using WPF UI, MVVM architecture, and .NET 8. It serves as a versatile desktop application tailored for fantasy world-building enthusiasts, particularly beneficial for Dungeons and Dragons campaigns and similar realms of imagination.
