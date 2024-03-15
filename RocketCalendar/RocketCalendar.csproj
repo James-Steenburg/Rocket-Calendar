@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\RocketCalendarIconAlt.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,11 @@
 
   <ItemGroup>
     <None Remove="Assets\AbstractBackground.jpeg" />
+    <None Remove="Assets\RC-PNG-T.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\RocketCalendarIconAlt.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +40,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\AbstractBackground.jpeg" />
+    <Resource Include="Assets\RC-PNG-T.png" />
   </ItemGroup>
 
   <ItemGroup>

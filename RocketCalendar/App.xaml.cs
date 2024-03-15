@@ -68,11 +68,6 @@ namespace RocketCalendar
                     services.AddSingleton<Views.Pages.SettingsPage>();
                     services.AddSingleton<ViewModels.Pages.SettingsViewModel>();
 
-
-                    services.AddSingleton<Views.Pages.ImagesDisplayPage>();
-                    services.AddSingleton<ViewModels.Pages.ImagesDisplayViewModel>();
-
-
                     services.AddSingleton<Views.Pages.CalendarPage>();
                     services.AddSingleton<ViewModels.Pages.CalendarViewModel>();
                     services.AddSingleton<Views.Pages.CreateCalendarPage>();
