@@ -16,16 +16,10 @@ using RocketCalendar.Properties;
 
 /*
  
-
-
-TO DO:
+To do for next minor patch:
     1. Setup statusbar to show only when tasks are running
-    3. Clean up
-
-
-    Move Day and Calendar controls to custom controls: https://www.youtube.com/watch?v=t8zB_SYGOF0
-    Add Fonts: Montserrat or AzeretMono-thin(DRS)?
-    Make a Create Excel Event List Template and Excel Event List Import
+    2. Clean up
+    3. Make a Create Excel Event List Template and Excel Event List Import
 
 Unused Content to check:
     1. Dialog Content Resources for CreateCalendarPage
@@ -33,6 +27,7 @@ Unused Content to check:
 Version 2:
     1. Multiday events
     2. Multi Calendar Support
+
  */
 
 
@@ -71,81 +66,7 @@ namespace RocketCalendar.ViewModels
 
             if(_appData.IS_DEBUG_MODE)
             {
-                _appData.ActiveRocketCalendar = new RocketCalendarModel(
-                    "Example Gregorian Calendar",
-                    new RocketDate(6, 2, 2, 2024), 
-                    new ObservableCollection<RocketMonth>() 
-                    {
-                        new RocketMonth("January", 31),
-                        new RocketMonth("February", 28, 4),
-                        new RocketMonth("March", 31),
-                        new RocketMonth("April", 30),
-                        new RocketMonth("May", 31),
-                        new RocketMonth("June", 30),
-                        new RocketMonth("July", 31),
-                        new RocketMonth("August", 31), 
-                        new RocketMonth("September", 30),
-                        new RocketMonth("October", 31),
-                        new RocketMonth("November", 30),
-                        new RocketMonth("December", 31) 
-                    },
-                    new ObservableCollection<string>()
-                    {
-                        "Sunday",
-                        "Monday",
-                        "Tuesday",
-                        "Wednesday",
-                        "Thursday",
-                        "Friday",
-                        "Saturday"
-                    },
-                    new ObservableCollection<RocketEvent>()
-                    {
-                        new RocketEvent(new RocketDate(1,1,1),"bday","it was my bday",false,2),
-                        new RocketEvent(new RocketDate(3,2,2024),"Today","Just playing God of War",false,2),
-                        new RocketEvent(new RocketDate(3,2,2024),"Jessie","Just playing God of War",false,8),
-                        new RocketEvent(new RocketDate(3,2,2024),"Played","Just playing God of War",false,9),
-                        new RocketEvent(new RocketDate(3,2,2024),"Kratos","Just playing God of War",true,10),
-                        new RocketEvent(new RocketDate(5,6,2024),"Bday","wow 30",true,10,0,1),
-                        new RocketEvent(new RocketDate(2,1,2024),"Every6months","wow 6",true,10,6,0)
-                    },
-                    2,
-                    2024
-                    );
-
-                Helpers.RocketDateHelper rdh = new RocketDateHelper();
-
-
-                //Validation:
-                //Base Date: Monday December 25th, 2023 --> RocketDate(1,25,11,2023) --> correct
-                //Base Date 2: Wednesday Feb 21st, 2024 --> RocketDate(3,21,1,2024) --> correct
-                //Base Date 3: Saturday March 2nd, 2024 --> RocketDate(6,2,2,2024) --> correct
-
-                //July 1st 1975 - Tuesday 
-                string shouldBeTuesday = rdh.ConvertDayIndexToString(rdh.GetFirstDayNameIndexOfCurrentYear(_appData.ActiveRocketCalendar, 6, 1975));
-
-                //July 1st 2010 - Thursday 
-                string shouldBeThursday2 = rdh.ConvertDayIndexToString(rdh.GetFirstDayNameIndexOfCurrentYear(_appData.ActiveRocketCalendar, 6, 2010));
-
-                //Jan 1 2024 - Monday
-                string shouldBeMonday2 = rdh.ConvertDayIndexToString(rdh.GetFirstDayNameIndexOfCurrentYear(_appData.ActiveRocketCalendar, 0, 2024));
-
-                //Sept 1st 2023 - Friday
-                string shouldBeFriday = rdh.ConvertDayIndexToString(rdh.GetFirstDayNameIndexOfCurrentYear(_appData.ActiveRocketCalendar, 8, 2023));
-
-                //Dec 1st 2023 - Friday
-                string shouldBeFriday2 = rdh.ConvertDayIndexToString(rdh.GetFirstDayNameIndexOfCurrentYear(_appData.ActiveRocketCalendar, 11, 2023));
-
-                //Feb 1st 2024 - Thursday
-                string shouldBeThursday = rdh.ConvertDayIndexToString(rdh.GetFirstDayNameIndexOfCurrentYear(_appData.ActiveRocketCalendar, 1, 2024));
-
-                //July 1st 2024 - Monday
-                string shouldBeMonday = rdh.ConvertDayIndexToString(rdh.GetFirstDayNameIndexOfCurrentYear(_appData.ActiveRocketCalendar, 6, 2024));
-
-                //July 1st 2091 - Sunday 
-                string shouldBeSunday = rdh.ConvertDayIndexToString(rdh.GetFirstDayNameIndexOfCurrentYear(_appData.ActiveRocketCalendar, 6, 2091));
-
-                string check = shouldBeTuesday + shouldBeFriday + shouldBeFriday2 + shouldBeThursday + shouldBeMonday + shouldBeThursday2 + shouldBeMonday2 + shouldBeSunday; 
+                //debug code
             }
         }
 
