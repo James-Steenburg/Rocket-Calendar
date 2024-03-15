@@ -191,13 +191,7 @@ namespace RocketCalendar.ViewModels
                     },
                     new ObservableCollection<RocketEvent>()
                     {
-                        new RocketEvent(new RocketDate(1,1,1),"bday","it was my bday",false,2),
-                        new RocketEvent(new RocketDate(3,2,2024),"Today","Just playing God of War",false,2),
-                        new RocketEvent(new RocketDate(3,2,2024),"Jessie","Just playing God of War",false,8),
-                        new RocketEvent(new RocketDate(3,2,2024),"Played","Just playing God of War",false,9),
-                        new RocketEvent(new RocketDate(3,2,2024),"Kratos","Just playing God of War",true,10),
-                        new RocketEvent(new RocketDate(5,6,2024),"Bday","wow 30",true,10,0,1),
-                        new RocketEvent(new RocketDate(2,1,2024),"Every6months","wow 6",true,10,6,0)
+                        new RocketEvent(new RocketDate(25,11,100),"Christmas","Merry Christmas!",true,10,0,1)
                     },
                     2,
                     2024
