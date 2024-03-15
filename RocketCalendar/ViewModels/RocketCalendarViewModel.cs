@@ -153,6 +153,7 @@ namespace RocketCalendar.ViewModels
         {
             ApplicationTitle = "Rocket | Calendar";
 
+            
             try
             {
                 RocketCalendarModel newCalendar = io.LoadCalendar_XML(Properties.Settings.Default.DefaultCalendarFilePath);
@@ -160,7 +161,10 @@ namespace RocketCalendar.ViewModels
                 {
                     GeneratePlaceHolderCalendar();
                 }
-                _appData.ActiveRocketCalendar = newCalendar;
+                else
+                {
+                    _appData.ActiveRocketCalendar = newCalendar;
+                }    
             }
             catch
             {
