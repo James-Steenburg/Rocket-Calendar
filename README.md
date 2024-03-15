@@ -13,7 +13,11 @@ Rocket Calendar is a hobby project created in C# using WPF UI, MVVM architecture
 
 - **Data Accessibility:** Export your events list to either an Excel or XML file format and select whether to include private events that are not yet ready to be shared.
 
-## Getting Started
+## Get Started
+
+Download and run the RocketCalendarSetup.msi file to install Rocket Calendar.
+
+## Using the Repository
 
 1. Clone the repository:
 
@@ -27,7 +31,7 @@ Rocket Calendar is a hobby project created in C# using WPF UI, MVVM architecture
 
 ## Contributing
 
-Contributions are welcome! If you have any ideas, suggestions, or bug fixes, feel free to open an issue ticket.
+Contributions are welcome! If you have any ideas, suggestions, or bug fixes, feel free to open an issue ticket or post a comment in the discussions tab.
 
 ---
 
