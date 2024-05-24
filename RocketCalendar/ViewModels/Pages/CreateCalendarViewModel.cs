@@ -167,44 +167,6 @@ namespace RocketCalendar.ViewModels.Pages
             {
                 ShowSuccessSnackbar("A new calendar was not created.");
             }
-
-            
-
-            /*
-             //not needed?
-            if(MonthListViewItems.Count > 0 && DayNameListViewItems.Count > 0 && NewCalendarName.Length > 0)
-            {
-                MonthListBoxItems = MonthListViewItems;
-                DayNameListBoxItems = DayNameListViewItems;
-
-                //Set Base Date
-                ContentDialogResult result = await contentDialogService.ShowSimpleDialogAsync(
-                new SimpleContentDialogCreateOptions()
-                {
-                    Title = "Last Step!",
-                    Content = content,
-                    PrimaryButtonText = "Save",
-                    CloseButtonText = "Cancel",
-                }
-                );
-
-                string resultText = result switch
-                {
-                    ContentDialogResult.Primary => "User saved their work",
-                    ContentDialogResult.Secondary => "User did not save their work",
-                    _ => "User cancelled the dialog"
-                };
-
-                //...
-            }
-            else
-            {
-                if (!IsFlyoutOpen)
-                    IsFlyoutOpen = true;
-            }
-
-             */
-
         }
 
         private ControlAppearance _snackbarAppearance = ControlAppearance.Secondary;
@@ -240,7 +202,6 @@ namespace RocketCalendar.ViewModels.Pages
         [RelayCommand]
         private void AddMonthToCollection(object obj)
         {
-            //...
             MonthListViewItems.Add(new RocketMonth(NewMonthName, NewMonthDayCount));
             OnPropertyChanged(nameof(IsCreateCalendarButtonEnabled));
             OnPropertyChanged(nameof(IsSpecificDayNumberSelectEnabled));
@@ -262,7 +223,6 @@ namespace RocketCalendar.ViewModels.Pages
         [RelayCommand]
         private void AddDayToCollection(object obj)
         {
-            //...
             DayNameListViewItems.Add(NewDayName);
             OnPropertyChanged(nameof(IsCreateCalendarButtonEnabled));
         }
@@ -297,9 +257,6 @@ namespace RocketCalendar.ViewModels.Pages
 
         private void InitializeViewModel()
         {
-            //initialization ...
-
-
             _isInitialized = true;
         }
 

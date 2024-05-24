@@ -65,7 +65,6 @@ namespace RocketCalendar.Views
         {
             base.OnClosed(e);
 
-            // Make sure that closing this window will begin the process of closing the application.
             Application.Current.Shutdown();
         }
 

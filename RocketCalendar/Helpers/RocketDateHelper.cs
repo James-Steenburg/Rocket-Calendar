@@ -11,10 +11,6 @@ namespace RocketCalendar.Helpers
 {
     public class RocketDateHelper
     {
-        //July 17th 1990 is a Monday
-
-        //another resource: https://cs.uwaterloo.ca/~alopez-o/math-faq/node73.html#:~:text=For%20a%20Gregorian%20date%2C%20add,7%20and%20take%20the%20remainder.
-
         public int GetFirstDayNameIndexOfCurrentYear(RocketCalendarModel calendar, int currentMonthIndex, int currentYear)
         {
             int indexResult = 0;
@@ -30,7 +26,7 @@ namespace RocketCalendar.Helpers
             int dayIndexDiff = dayCountDiff % calendar.DayNameCollection.Count;
 
             //Determine shift direction
-                //Specifically, is the base date in the past or future compared to the current date?
+                //Specifically, determine if the base date in the past or future compared to the current date
             bool isBaseDateInFuture = true;
             if (isBaseDateInPastOrCurrentMonth)
             {
@@ -66,7 +62,6 @@ namespace RocketCalendar.Helpers
 
             return indexResult;
         }
-
 
         public bool DoesRepeatingEventApplyToDate(RocketCalendarModel calendar, RocketEvent rEvent, RocketDate targetDate)
         {
@@ -109,33 +104,13 @@ namespace RocketCalendar.Helpers
                     return true;
                 }
             }
-
             return false;
-        }
-
-
-        //To delete later
-        public string ConvertDayIndexToString(int index)
-        {
-            switch (index)
-            {
-                case 0: return "Sunday";
-                case 1: return "Monday";
-                case 2: return "Tuesday";
-                case 3: return "Wednesday";
-                case 4: return "Thursday";
-                case 5: return "Friday";
-                case 6: return "Saturday";
-            }
-            return "Index out of range";
         }
 
         #region Resources
 
         private bool IsBaseDateInPastOrCurrentMonth(RocketCalendarModel calendar, int currentMonthIndex, int currentYear)
         {
-            
-            
             if (currentYear > calendar.BaseDate.DateYear)
             {
                 //if base date year is in a past year
@@ -214,16 +189,6 @@ namespace RocketCalendar.Helpers
                     }
                 }
             }
-
-            //Removed becsause the leap day would happen after the 1st of that month:
-
-            //If current year is a leap year for a particular month, add an additional day
-            //if (currentYear % calendar.MonthCollection[currentMonth].LeapYearInterval == 0)
-            //{
-                //result++;
-            //}
-
-
             result += currentDay;
 
             return result;
@@ -290,8 +255,6 @@ namespace RocketCalendar.Helpers
                     
                 }
             }
-
-
             return result;
         }
 
@@ -310,7 +273,6 @@ namespace RocketCalendar.Helpers
             }
             return result;
         }
-
 
         #endregion
     }

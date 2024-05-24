@@ -48,9 +48,6 @@ namespace RocketCalendar.ViewModels.Pages
         [NotifyPropertyChangedFor(nameof(IsCreateEventButtonEnabled))]
         private int _eventYearInput;
 
-        //[ObservableProperty]
-        //private bool _isRepeatingEvent;
-
         [ObservableProperty]
         private int _weekRepeatInterval;
 
@@ -197,7 +194,6 @@ namespace RocketCalendar.ViewModels.Pages
                 );
             }
 
-            
             //Clear/Dispose of CreateEvent V/VM?
         }
 

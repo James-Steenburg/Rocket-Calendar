@@ -95,7 +95,6 @@
                 Icon="{ui:SymbolIcon CalendarAdd24}"
                 IsEnabled="{Binding ViewModel.IsCreateEventButtonEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:CreateEventPage}}" />
 
-
         </Grid>
 
         <ui:TextBox
@@ -118,7 +117,6 @@
                     FontSize="16"
                     FontTypography="Body"
                     Text="Event Repeat Frequency" />
-
 
             </ui:CardExpander.Header>
             <Grid>
@@ -192,7 +190,6 @@
             </Grid>
         </ui:CardExpander>
 
-
         <ui:TextBox
             Grid.Row="4"
             Grid.Column="0"
@@ -201,7 +198,6 @@
             VerticalAlignment="Stretch"
             PlaceholderText="Enter Event Desc..."
             Text="{Binding ViewModel.EventDescription, Mode=TwoWay}" />
-
 
         <TextBlock
             Grid.Row="2"
@@ -220,8 +216,6 @@
             PlaceholderText="Day"
             SmallChange="1"
             Value="{Binding ViewModel.EventDayInput, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-
-
 
         <TextBlock
             Grid.Row="2"
@@ -253,7 +247,6 @@
             PlaceholderText="Year"
             SmallChange="1"
             Value="{Binding ViewModel.EventYearInput, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-
 
     </Grid>
 </Page>

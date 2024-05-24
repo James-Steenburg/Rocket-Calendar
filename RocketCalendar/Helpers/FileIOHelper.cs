@@ -29,7 +29,6 @@ namespace RocketCalendar.Helpers
             var file = new FileInfo(filePath);
 
             await SaveExcelFile(events, file);
-
         }
 
         private async Task SaveExcelFile(ObservableCollection<RocketEvent> events, FileInfo file)
@@ -55,7 +54,7 @@ namespace RocketCalendar.Helpers
             }
         }
 
-        public ObservableCollection<RocketEvent> LoadEventList_Excel2(string filePath)
+        public ObservableCollection<RocketEvent> LoadEventList_Excel(string filePath)
         {
             ObservableCollection<RocketEvent> events = new ObservableCollection<RocketEvent>();
 
@@ -84,43 +83,12 @@ namespace RocketCalendar.Helpers
                     events.Add(e);
                     row++;
                 }
-
-
-                /*
-                 using (var package = new ExcelPackage(file))
-            {
-                var xlWorkbook = package.Workbook;
-                var xlWorksheet = xlWorkbook.Worksheets.First();
-                //ignoring headers
-                int row = 2;
-                int col = 1;
-
-                while (string.IsNullOrWhiteSpace(xlWorksheet.Cells[row, col].Value?.ToString()) == false)
-                {
-                    RocketEvent e = new RocketEvent(new RocketDate(1, 1, 1), "", "", false, 1);
-
-                    e.EventName = xlWorksheet.Cells[row, col].Value.ToString();
-                    e.EventDescription = xlWorksheet.Cells[row, col + 2].Value.ToString();
-                    e.IsPrivate = bool.Parse(xlWorksheet.Cells[row, col + 3].Value.ToString());
-                    e.ColorIndex = int.Parse(xlWorksheet.Cells[row, col + 4].Value.ToString());
-                    e.MonthRepeatInterval = int.Parse(xlWorksheet.Cells[row, col + 5].Value.ToString());
-                    e.YearRepeatInterval = int.Parse(xlWorksheet.Cells[row, col + 6].Value.ToString());
-                    e.EventDate.DateDay = int.Parse(xlWorksheet.Cells[row, col + 7].Value.ToString());
-                    e.EventDate.DateMonth = int.Parse(xlWorksheet.Cells[row, col + 8].Value.ToString());
-                    e.EventDate.DateYear = int.Parse(xlWorksheet.Cells[row, col + 9].Value.ToString());
-                    events.Add(e);
-                    row++;
-                }
-                
             }
-                 
-                 */
-            }
-
             return events;
         }
 
-        public async Task<ObservableCollection<RocketEvent>> LoadEventList_Excel(string filePath)
+        //Currently Unimplemented
+        public async Task<ObservableCollection<RocketEvent>> LoadEventList_Excel_async(string filePath)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var file = new FileInfo(filePath);
@@ -143,7 +111,6 @@ namespace RocketCalendar.Helpers
 
             using var package = new ExcelPackage(file);
 
-            //issue here
             await package.LoadAsync(file);
 
             var xlWorksheet = package.Workbook.Worksheets[0];
@@ -620,7 +587,6 @@ namespace RocketCalendar.Helpers
                 //can't find file
                 return null;
             }
-
             return temporaryCalendar;
         }
          
@@ -648,7 +614,5 @@ namespace RocketCalendar.Helpers
         {
             return new RocketMonth("", 1);
         }
-
-        
     }
 }

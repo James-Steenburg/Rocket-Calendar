@@ -34,9 +34,6 @@ namespace RocketCalendar.Models
         [ObservableProperty]
         private RocketEvent _wipEventPlaceholder;
 
-        //[ObservableProperty]
-        //private ObservableCollection<RocketEvent> _repeatingEventCollection;
-
         public RocketCalendarModel
             (
             string calendarName,

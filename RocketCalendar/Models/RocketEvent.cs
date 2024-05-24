@@ -69,10 +69,6 @@ namespace RocketCalendar.Models
             }
         }
 
-        //[ObservableProperty]
-        //[NotifyPropertyChangedFor(nameof(IsRepeatingEvent))]
-        //private int _weekRepeatInterval;
-        
         [EpplusTableColumn(Order = 6)]
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsRepeatingEvent))]
@@ -103,6 +99,5 @@ namespace RocketCalendar.Models
             MonthRepeatInterval = monthRepeatInterval;
             YearRepeatInterval = yearRepeatInterval;
         }
-
     }
 }

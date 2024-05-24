@@ -274,8 +274,6 @@
                         </StackPanel>
                     </Border>
                 </Button>
-
-
             </Grid>
         </Border>
     </Grid>

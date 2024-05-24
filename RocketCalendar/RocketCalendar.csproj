@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\RocketCalendarIconAlt.ico</ApplicationIcon>
     <Platforms>AnyCPU;x86</Platforms>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

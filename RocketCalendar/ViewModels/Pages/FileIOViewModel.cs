@@ -196,7 +196,7 @@ namespace RocketCalendar.ViewModels.Pages
                     return;
                 }
 
-                var newEventList = io.LoadEventList_Excel2(openFileDialog.FileName);
+                var newEventList = io.LoadEventList_Excel(openFileDialog.FileName);
 
                 if (newEventList != null)
                 {
@@ -230,15 +230,11 @@ namespace RocketCalendar.ViewModels.Pages
                         }
                         ShowSuccessSnackbar("Your event list was imported from a Xml file");
                     }
-                     
-
                 }
                 else
                 {
                     ShowErrorSnackbar("The application failed to import your event list from an Excel file. Verify you are selecting the correct file.");
                 }
-
-
                 ShowSuccessSnackbar("Your event list was imported from an Excel file");
             }
             catch
@@ -287,7 +283,6 @@ namespace RocketCalendar.ViewModels.Pages
                     }
                     io.SaveEventList_XML(publicEventsCollection, saveFileDialog.FileName);
                 }
-
                 ShowSuccessSnackbar("Your event list was saved to an Xaml file");
             }
             catch
@@ -462,7 +457,5 @@ namespace RocketCalendar.ViewModels.Pages
                 ShowErrorSnackbar("The application failed to import your calendar from a Xml file");
             }
         }
-
-
     }
 }

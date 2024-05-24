@@ -24,7 +24,6 @@
         <Grid>
             <Border Background="DarkSlateBlue" Opacity="0.10" />
 
-
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="4*" />
@@ -52,7 +51,6 @@
                         TextWrapping="Wrap" />
                 </StackPanel>
 
-
                 <StackPanel
                     Grid.Row="1"
                     Margin="20"
@@ -66,15 +64,8 @@
                         Margin="10"
                         Command="{Binding ViewModel.CreateACalendarButtonCommand}"
                         Content="Create a Calendar" />
-
                 </StackPanel>
             </Grid>
-
         </Grid>
-
-
     </Border>
-
-
-
 </Page>

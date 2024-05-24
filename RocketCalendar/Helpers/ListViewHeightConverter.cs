@@ -22,7 +22,7 @@ namespace RocketCalendar.Helpers
                 }
                 return 100;
             }
-            //double width = (double)value;
+
             Grid grid = value as Grid;
             double height = grid.Height;
 
@@ -31,31 +31,6 @@ namespace RocketCalendar.Helpers
             double parameterText = System.Convert.ToDouble(label.Content);
 
             return (height / parameterText);
-            /*
-            ListView listview = value as ListView;
-            //double width = listview.Width;
-
-            GridView gv = listview.View as GridView;
-            for (int i = 0; i < gv.Columns.Count; i++)
-            {
-                if (!Double.IsNaN(gv.Columns[i].Width))
-                    width -= gv.Columns[i].Width;
-            }
-            return width - 5;// this is to take care of margin/padding
-            */
-            /*
-            if (value == null || parameter == null)
-            {
-                return 100;
-            }
-
-            double height = (double)value;
-            Label label = parameter as Label;
-            double parameterText = System.Convert.ToDouble(label.Content);
-
-            height = height / parameterText;
-            return height;
-            */
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -70,19 +45,6 @@ namespace RocketCalendar.Helpers
 
             Label label = parameter as Label;
             double parameterText = System.Convert.ToDouble(label.Content);
-
-            /*
-            int weekCount = 0;
-            IEnumerable enumerable = values[1] as IEnumerable;
-            if (enumerable != null)
-            {
-
-                foreach (object element in enumerable)
-                {
-                    weekCount++;
-                }
-            }
-            */
 
             return (double)(actualRowHeight / parameterText);
         }

@@ -14,23 +14,6 @@ using System.Windows;
 using RocketCalendar.Properties;
 
 
-/*
- 
-To do for next minor patch:
-    1. Setup statusbar to show only when tasks are running
-    2. Clean up
-    3. Make a Create Excel Event List Template and Excel Event List Import
-
-Unused Content to check:
-    1. Dialog Content Resources for CreateCalendarPage
-
-Version 2:
-    1. Multiday events
-    2. Multi Calendar Support
-
- */
-
-
 namespace RocketCalendar.ViewModels
 {
     public partial class RocketCalendarViewModel : ObservableObject
@@ -63,10 +46,9 @@ namespace RocketCalendar.ViewModels
             if (!_isInitialized)
                 InitializeViewModel();
 
-
             if(_appData.IS_DEBUG_MODE)
             {
-                //debug code
+                //debug code here
             }
         }
 
@@ -74,7 +56,6 @@ namespace RocketCalendar.ViewModels
         {
             ApplicationTitle = "Rocket | Calendar";
 
-            
             try
             {
                 RocketCalendarModel newCalendar = io.LoadCalendar_XML(Properties.Settings.Default.DefaultCalendarFilePath);

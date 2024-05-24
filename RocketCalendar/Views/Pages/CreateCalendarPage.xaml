@@ -62,12 +62,6 @@
                         <ListBoxItem>Red</ListBoxItem>
                         <ListBoxItem>Yellow</ListBoxItem>
                     </ListBox>
-                    <!--
-                        ListBox
-                        Grid.Column="1"
-                        ItemsSource="{Binding ViewModel.MonthListViewItems, Mode=TwoWay}"
-                        SelectedItem="{Binding ViewModel.BaseDate.DateMonth, Mode=TwoWay}" />
-                    -->
                 </Grid>
                 <Grid Margin="10,10,10,0">
                     <Grid.ColumnDefinitions>

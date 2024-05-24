@@ -51,12 +51,6 @@
             OpenPaneLength="200"
             Transition="FadeInWithSlide">
             <ui:NavigationView.Header>
-                <!--
-                    ui:BreadcrumbBar
-                    Margin="42,32,0,0"
-                    FontSize="28"
-                    FontWeight="DemiBold" /
-                -->
                 <ProgressBar
                     Margin="3,0,0,5"
                     IsIndeterminate="True"
